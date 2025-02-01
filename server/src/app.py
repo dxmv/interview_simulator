@@ -1,6 +1,6 @@
-from flask import Flask, request, jsonify
+from flask import Flask
 from flask_cors import CORS
-import os
+from routes.cv_routes import cv_blueprint, init_cv_routes
 
 app = Flask(__name__)
 
@@ -13,52 +13,15 @@ CORS(app, resources={
     }
 })
 
-# Configure upload folder and allowed extensions
+# Configure upload folder
 UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'pdf'}
-
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Create uploads directory if it doesn't exist
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# Initialize CV routes
+init_cv_routes(UPLOAD_FOLDER)
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-@app.route("/cv/upload", methods=['POST'])
-def upload_file():
-    try:
-        # Check if a file was included in the request
-        if 'file' not in request.files:
-            return jsonify({'error': 'No file part'}), 400
-        
-        file = request.files['file']
-        
-        # If user doesn't select file, browser might submit empty file
-        if file.filename == '':
-            return jsonify({'error': 'No selected file'}), 400
-        
-        if file:
-            filename = file.filename
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path)
-            
-            return jsonify({
-                'message': 'File uploaded successfully',
-                'filename': filename
-            }), 200
-        
-        return jsonify({'error': 'File type not allowed'}), 400
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/cv/files', methods=['GET'])
-def list_files():
-    files = []
-    for filename in os.listdir(app.config['UPLOAD_FOLDER']):
-        if allowed_file(filename):
-            files.append(filename)
-    return jsonify({'files': files})
+# Register blueprints
+app.register_blueprint(cv_blueprint, url_prefix='/cv')
 
 if __name__ == "__main__":
     app.run(debug=True)

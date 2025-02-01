@@ -1,0 +1,63 @@
+{
+  "personal_info": {
+    "name": "Frying Pan"
+  },
+  "professional_summary": {
+    "years_of_experience": 2,
+    "seniority_level": "Intern",
+    "current_role": null
+  },
+  "skills": {
+    "technical": [
+      "Java",
+      "JavaScript/TypeScript",
+      "Python",
+      "C#",
+      "C++",
+      "PHP",
+      "SQL",
+      "Git",
+      "ReactJS",
+      "Angular",
+      "Redux/Flux",
+      "HTML",
+      "CSS/Bootstrap",
+      "Jest",
+      "Apache Spark",
+      "MapReduce",
+      "Scikit-learn",
+      "Azure"
+    ],
+    "soft": []
+  },
+  "education": [
+    {
+      "degree": "Bachelor of Science, Computer Science",
+      "institution": "Concordia University – Montreal, QC.",
+      "year": null
+    }
+  ],
+  "work_experience": [
+    {
+      "company": "Coinbase – Montreal, QC.",
+      "role": "Incoming Software Engineer Intern",
+      "duration": "Jan 2022 – Apr 2022"
+    },
+    {
+      "company": "Cisco Systems – San Jose, CA.",
+      "role": "Software Engineer Intern",
+      "duration": "May 2021 – Aug 2021"
+    },
+    {
+      "company": "Genetec – Montreal, QC.",
+      "role": "Software Developer Intern",
+      "duration": "Jan 2021 – Apr 2021"
+    },
+    {
+      "company": "Concordia University – Montreal, QC.",
+      "role": "CS Teaching Assistant",
+      "duration": "Jan 2021 – Apr 2021"
+    }
+  ],
+  "languages": []
+}
