@@ -2,11 +2,6 @@
   "personal_info": {
     "name": "Frying Pan"
   },
-  "professional_summary": {
-    "years_of_experience": 2,
-    "seniority_level": "Intern",
-    "current_role": null
-  },
   "skills": {
     "technical": [
       "Java",
@@ -27,14 +22,13 @@
       "MapReduce",
       "Scikit-learn",
       "Azure"
-    ],
-    "soft": []
+    ]
   },
   "education": [
     {
       "degree": "Bachelor of Science, Computer Science",
       "institution": "Concordia University – Montreal, QC.",
-      "year": null
+      "year": 2023
     }
   ],
   "work_experience": [
@@ -59,5 +53,27 @@
       "duration": "Jan 2021 – Apr 2021"
     }
   ],
-  "languages": []
+  "projects": [
+    {
+      "name": "r/WallStreetBets DD Recommender",
+      "description": "Created a model to make the access to stock research easier. Aimed to help busy retail investors quickly filter out the best stock trends.",
+      "technologies": [
+        "Python",
+        "PySpark",
+        "SparkNLP",
+        "scikit-learn"
+      ]
+    },
+    {
+      "name": "Online Grocery Store – Website",
+      "description": "Led team of 6 to create an online grocery store website.",
+      "technologies": [
+        "JavaScript",
+        "PHP",
+        "MySQL",
+        "HTML",
+        "CSS"
+      ]
+    }
+  ]
 }

@@ -1,4 +1,7 @@
 import os
+import json
+
+
 
 class CVService:
     def __init__(self, upload_folder):
@@ -6,6 +9,9 @@ class CVService:
         os.makedirs(upload_folder, exist_ok=True)
     
     def save_file(self, file):
+        '''
+        Saves the file to the upload folder
+        '''
         if file.filename == '':
             raise ValueError('No selected file')
             
@@ -14,8 +20,8 @@ class CVService:
         file.save(file_path)
         return filename
     
-    def list_files(self):
-        files = []
-        for filename in os.listdir(self.upload_folder):
-            files.append(filename)
-        return files
+    def get_cv_analysis(self):
+        '''
+        Returns the analysis of the CV
+        '''
+        return json.load(open(os.path.join(self.upload_folder, "cv_analysis.json"), 'r'))

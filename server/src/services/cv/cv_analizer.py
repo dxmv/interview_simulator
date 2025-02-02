@@ -15,15 +15,7 @@ class CVAnalyzer:
     "personal_info": {
         "name": string,
     },
-    "professional_summary": {
-        "years_of_experience": number,
-        "seniority_level": string,
-        "current_role": string or null
-    },
-    "skills": {
-        "technical": string[],
-        "soft": string[]
-    },
+    "technical_skills": string[],
     "education": [{
         "degree": string,
         "institution": string,
@@ -33,8 +25,13 @@ class CVAnalyzer:
         "company": string,
         "role": string,
         "duration": string,
+        "key_responsibilities": string[]
     }],
-    "languages": string[]
+    "projects": [{
+        "name": string,
+        "description": string,
+        "technologies": string[]
+    }],
 }
 
 Do not include any explanations or additional text, only return the valid JSON object."""
@@ -47,7 +44,7 @@ Do not include any explanations or additional text, only return the valid JSON o
             "stream": True,
             "options": {
                 "temperature": 0.2,
-                "num_predict": 500
+                "num_predict": 2000
             }
         }
         try:

@@ -27,10 +27,10 @@ def upload_file():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@cv_blueprint.route('/files', methods=['GET'])
-def list_files():
+@cv_blueprint.route('/', methods=['GET'])
+def get_cv_analysis():
     try:
-        files = cv_service.list_files()
-        return jsonify({'files': files})
+        cv_analysis = cv_service.get_cv_analysis()
+        return jsonify({'cv_analysis': cv_analysis})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
