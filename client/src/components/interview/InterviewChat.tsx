@@ -1,10 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Message } from '../../types/chat_types';
 import { PrimaryButton } from '../reusable/PrimaryButton';
+import { startInterview, sendMessage, subscribeToMessages, disconnectSocket } from '../../services/interviewServiceApi';
 
-const InterviewChat = () => {
-    const [messages, setMessages] = useState<Message[]>([]);
+const InterviewChat = ({ questions }: { questions: string[] }) => {
+    const [messages, setMessages] = useState<Message[]>([{
+        id: Date.now().toString(),
+        content: "Welcome to your technical interview!\nI'll be asking you questions based on your CV and experience.\nPlease provide detailed answers, and we'll discuss various aspects of your background.\n\n" + questions[0],
+        sender: 'ai',
+        timestamp: new Date()
+    }]);
     const [newMessage, setNewMessage] = useState('');
+    const [isConnected, setIsConnected] = useState(false);
+
+    useEffect(() => {
+        const initializeSocket = async () => {
+            try {
+                await startInterview(questions.length);
+                setIsConnected(true);
+                subscribeToMessages((message) => {
+                    setMessages(prev => [...prev, message]);
+                });
+            } catch (error) {
+                console.error('Failed to initialize socket:', error);
+            }
+        };
+
+        initializeSocket();
+
+        return () => {
+            disconnectSocket();
+        };
+    }, [questions.length]);
 
     const handleSendMessage = () => {
         if (!newMessage.trim()) return;
@@ -17,9 +44,8 @@ const InterviewChat = () => {
         };
 
         setMessages(prev => [...prev, userMessage]);
+        sendMessage(newMessage);
         setNewMessage('');
-        
-        // TODO: Send message to backend and handle AI response
     };
 
     return (

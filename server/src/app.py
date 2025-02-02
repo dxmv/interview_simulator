@@ -2,9 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from routes.cv_routes import cv_blueprint, init_cv_routes
 from routes.interview_routes import interview_blueprint, init_interview_routes
-
-
-
+from flask_socketio import SocketIO
 
 
 if __name__ == "__main__":
@@ -13,6 +11,7 @@ if __name__ == "__main__":
 
     # Allow requests from all origins
     CORS(app, origins=["*"])
+    socketio = SocketIO(app, cors_allowed_origins="*")
 
     # Configure upload folder
     UPLOAD_FOLDER = 'uploads'
@@ -20,9 +19,9 @@ if __name__ == "__main__":
 
     # Initialize routes
     init_cv_routes(UPLOAD_FOLDER)
-    init_interview_routes()
+    init_interview_routes(socketio)
 
     # Register blueprints
     app.register_blueprint(cv_blueprint, url_prefix='/cv')
     app.register_blueprint(interview_blueprint, url_prefix='/interview')
-    app.run(debug=True)
+    socketio.run(app, debug=True)

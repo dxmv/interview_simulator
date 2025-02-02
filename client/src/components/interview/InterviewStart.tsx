@@ -2,19 +2,22 @@ import { useState } from 'react';
 import { PrimaryButton } from '../reusable/PrimaryButton'
 import { startInterview } from '../../services/interviewServiceApi';
 
+interface InterviewStartProps {
+    setStep: (step: number) => void;
+    setQuestions: (questions: string[]) => void;
+}
 
-export default function InterviewStart({ setStep }: { setStep: (step: number) => void }) {
+export default function InterviewStart({ setStep, setQuestions }: InterviewStartProps) {
     const [numQuestions, setNumQuestions] = useState<number>(5);
 
     const handleStartInterview = async () => {
-      try {
-        const response = await startInterview(numQuestions);
-        // Handle the response - you'll need to implement state management for the chat
-        console.log(response);
-        setStep(2);
-      } catch (error) {
-        console.error('Failed to start interview:', error);
-      }
+        try {
+            const response = await startInterview(numQuestions);
+            setQuestions(response.questions);
+            setStep(2);
+        } catch (error) {
+            console.error('Failed to start interview:', error);
+        }
     };
   
     return (
