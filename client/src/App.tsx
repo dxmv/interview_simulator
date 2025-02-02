@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { CVupload } from "./components/cv-upload/CVupload"
 import { getCvAnalysis } from "./services/cvServiceApi";
 import { CVAnalysis } from "./types/cv_types";
+import Interview from "./components/interview/Interview";
 
 function App() {
   const [cvAnalysis, setCvAnalysis] = useState<CVAnalysis | null>(null);
@@ -15,7 +16,7 @@ function App() {
     fetchCvAnalysis();
   }, []);
 
-  return <>{!cvAnalysis ? <CVupload onUpload={() => {}} /> : <div>{JSON.stringify(cvAnalysis)}</div>}</>
+  return <>{!cvAnalysis ? <CVupload onUpload={() => {}} /> : <Interview />}</>
 }
 
 export default App

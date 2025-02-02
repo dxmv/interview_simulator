@@ -10,6 +10,9 @@ def init_cv_routes(upload_folder):
 
 @cv_blueprint.route("/upload", methods=['POST'])
 def upload_file():
+    '''
+    Upload a cv to the server
+    '''
     try:
         if 'file' not in request.files:
             return jsonify({'error': 'No file part'}), 400
