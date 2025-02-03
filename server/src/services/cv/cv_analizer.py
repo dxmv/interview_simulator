@@ -1,10 +1,10 @@
-import requests
+from services.llm.llm_client import LLMClient
 import json
 import cv_parser
 
 class CVAnalyzer:
     def __init__(self):
-        self.ollama_api_url = "http://localhost:11434/api/generate"
+        self.llm_client = LLMClient()
 
     def analyze_cv(self, cv_text: str) -> dict:
         """
@@ -38,55 +38,17 @@ Do not include any explanations or additional text, only return the valid JSON o
 
         prompt = f"{system_prompt}\n\nCV Content:\n{cv_text}"
         
-        payload = {
-            "model": "mistral",
-            "prompt": prompt,
-            "stream": True,
-            "options": {
-                "temperature": 0.2,
-                "num_predict": 2000
-            }
-        }
         try:
-            response = requests.post(self.ollama_api_url, json=payload, stream=True)
-            response.raise_for_status()
-            
-            full_response = ""
-            for line in response.iter_lines():
-                print(line)
-                if not line:
-                    continue
+            response = self.llm_client.get_completion(
+                prompt, 
+                stream=True, 
+                num_predict=2000
+            )
+            return self.llm_client.extract_json_from_response(response)
                 
-                try:
-                    # Decode the line and parse it as JSON
-                    line_data = json.loads(line.decode('utf-8'))
-                    if 'response' in line_data:
-                        full_response += line_data['response']
-                    if line_data.get('done', True):
-                        break
-                except json.JSONDecodeError as e:
-                    print(f"Error parsing line: {e}")
-                    continue
-            print(full_response)
-            # Extract the JSON object from the full response
-            try:
-                start_idx = full_response.find('{')
-                end_idx = full_response.rfind('}') + 1
-                if start_idx == -1 or end_idx == 0:
-                    raise ValueError("No valid JSON object found in response")
-                
-                json_str = full_response[start_idx:end_idx]
-                analysis = json.loads(json_str)
-                return analysis
-            
-            except (json.JSONDecodeError, ValueError) as e:
-                print(f"Failed to parse JSON: {str(e)}")
-                print(f"Response text: {full_response}")
-                raise ValueError("Failed to get valid JSON response from Mistral")
-                
-        except requests.exceptions.RequestException as e:
-            print(f"Request failed: {str(e)}")
-            raise ValueError(f"Failed to communicate with Ollama: {str(e)}")
+        except ValueError as e:
+            print(f"Analysis failed: {str(e)}")
+            raise ValueError(f"Failed to analyze CV: {str(e)}")
 
 def save_json_to_file(data: dict, file_path: str) -> None:
     """

@@ -10,7 +10,7 @@ if __name__ == "__main__":
     app = Flask(__name__)
 
     # Allow requests from all origins
-    CORS(app, origins=["*"])
+    CORS(app)
     socketio = SocketIO(app, cors_allowed_origins="*")
 
     # Configure upload folder
