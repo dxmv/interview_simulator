@@ -3,6 +3,7 @@ import { Message as MessageType } from '../../types/chat_types';
 import { PrimaryButton } from '../reusable/PrimaryButton';
 import { SocketService } from '../../services/socketService';
 import Message from '../reusable/Message';
+import { AnswerEvaluation } from '../../types/interview';
 
 const InterviewChat = ({ questions }: { questions: string[] }) => {
     const [messages, setMessages] = useState<MessageType[]>([{
@@ -23,13 +24,22 @@ const InterviewChat = ({ questions }: { questions: string[] }) => {
 
     useEffect(() => {
         // Set up socket listeners
-        const handleMessage = (data: MessageType) => {
+        const handleMessage = (data: AnswerEvaluation) => {
             setMessages(prev => [...prev, {
                 id: Date.now().toString(),
-                content: data.content,
+                content: data.response,
                 sender: data.sender,
                 timestamp: new Date()
             }]);
+
+            if (data.next_question) {
+                setMessages(prev => [...prev, {
+                    id: Date.now().toString(),
+                    content: data.next_question,
+                    sender: data.sender,
+                    timestamp: new Date()
+                }]);
+            }
         };
 
         socketService.onMessage(handleMessage);
@@ -49,6 +59,12 @@ const InterviewChat = ({ questions }: { questions: string[] }) => {
 
         // Only send to server, don't add message locally
         socketService.submitAnswer(newMessage);
+        setMessages(prev => [...prev, {
+            id: Date.now().toString(),
+            content: newMessage,
+            sender: 'user',
+            timestamp: new Date()
+        }]);
         setNewMessage('');
     };
 

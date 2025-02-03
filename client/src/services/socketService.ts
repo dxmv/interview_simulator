@@ -1,5 +1,5 @@
 import { io, Socket } from 'socket.io-client';
-import { Message as MessageType } from '../types/chat_types';
+import { AnswerEvaluation } from '../types/interview';
 
 export class SocketService {
     private socket: typeof Socket;
@@ -43,7 +43,7 @@ export class SocketService {
         this.socket.on('interview_started', callback);
     }
 
-    public onMessage(callback: (data: MessageType) => void) {
+    public onMessage(callback: (data: AnswerEvaluation) => void) {
         this.socket.on('message', callback);
     }
 
@@ -52,3 +52,4 @@ export class SocketService {
         this.socket.disconnect();
     }
 }
+

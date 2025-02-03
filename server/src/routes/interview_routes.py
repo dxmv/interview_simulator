@@ -52,11 +52,11 @@ def handle_socket_events():
             answer = data.get('answer')
             print(f"Received answer: {answer}")
             
-            # Emit user's message first
-            emit('message', {'content': answer, 'sender': 'user'})
-            
-            # Then emit AI response
-            emit('message', {'content': f"Answer received: {answer}", 'sender': 'ai'})
+            answer_evaluation = interview_service.evaluate_answer(answer)
+            next_question = interview_service.get_next_question()
+
+            # emit AI response
+            emit('message', {'response': answer_evaluation, 'next_question': next_question, 'sender': 'ai'})
                 
         except Exception as e:
             print(f"Error processing answer: {str(e)}")

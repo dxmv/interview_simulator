@@ -5,7 +5,6 @@ import os
 class InterviewLLM:
     def __init__(self):
         self.llm_client = LLMClient()
-        self.temperature = 0.2
 
     def generate_interview_questions(self, num_questions):
         '''
@@ -68,11 +67,9 @@ class InterviewLLM:
         Candidate's answer: {answer}
         
         Provide a response that:
-        1. Briefly evaluates their answer on a scale of 1-10
-        2. Asks a relevant follow-up question if needed
-        3. If satisfied, moves to the next question from the list
-        
-        Return ONLY your response, no additional formatting."""
+        1. Evaluates their answer on a scale of 1-10
+        2. Gives the reason for the score
+        """
 
     def _get_generic_questions(self):
         '''

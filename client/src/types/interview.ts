@@ -8,3 +8,9 @@ export interface InterviewState {
     isCompleted: boolean;
     error: string | null;
 } 
+
+export interface AnswerEvaluation {
+    response: string;
+    next_question: string;
+    sender: "ai";
+}
