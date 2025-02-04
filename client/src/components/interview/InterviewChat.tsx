@@ -21,22 +21,23 @@ const InterviewChat = ({ questions }: { questions: string[] }) => {
     const socketService = SocketService.getInstance();
     const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
-
     useEffect(() => {
         // Set up socket listeners
         const handleMessage = (data: AnswerEvaluation) => {
+            // Add AI's response
             setMessages(prev => [...prev, {
                 id: Date.now().toString(),
                 content: data.response,
-                sender: data.sender,
+                sender: 'ai',
                 timestamp: new Date()
             }]);
 
-            if (data.next_question) {
+            // Only add next question if it exists
+            if (data.next_question !== null) {
                 setMessages(prev => [...prev, {
-                    id: Date.now().toString(),
+                    id: Date.now().toString() + '_next',
                     content: data.next_question,
-                    sender: data.sender,
+                    sender: 'ai',
                     timestamp: new Date()
                 }]);
             }
@@ -44,11 +45,10 @@ const InterviewChat = ({ questions }: { questions: string[] }) => {
 
         socketService.onMessage(handleMessage);
 
-        // Cleanup function
         return () => {
             socketService.getSocket().off('message', handleMessage);
         };
-    }, []); // Remove socketService from dependencies
+    }, []);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

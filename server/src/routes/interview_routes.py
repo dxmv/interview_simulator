@@ -52,11 +52,16 @@ def handle_socket_events():
             answer = data.get('answer')
             print(f"Received answer: {answer}")
             
-            answer_evaluation = interview_service.evaluate_answer(answer)
-            next_question = interview_service.get_next_question()
+            # Get evaluation and next question
+            evaluation_result = interview_service.evaluate_answer(answer)
+            next_question = interview_service.get_next_question() if evaluation_result.get('move_to_next') else None
 
-            # emit AI response
-            emit('message', {'response': answer_evaluation, 'next_question': next_question, 'sender': 'ai'})
+            # Emit response matching client-side AnswerEvaluation type
+            emit('message', {
+                'response': evaluation_result['response'],
+                'next_question': next_question,
+                'sender': 'ai'
+            })
                 
         except Exception as e:
             print(f"Error processing answer: {str(e)}")

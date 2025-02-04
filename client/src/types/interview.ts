@@ -10,7 +10,7 @@ export interface InterviewState {
 } 
 
 export interface AnswerEvaluation {
-    response: string;
-    next_question: string;
+    response: string;      // This will contain the follow-up question or acknowledgment
+    next_question: string | null;
     sender: "ai";
 }

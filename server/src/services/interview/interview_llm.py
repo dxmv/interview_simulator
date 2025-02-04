@@ -35,9 +35,22 @@ class InterviewLLM:
     def evaluate_answer(self, current_question, answer):
         '''
         Evaluate the candidate's answer using the LLM.
+        Returns a dictionary containing the response and move_to_next flag
         '''
         prompt = self._create_evaluation_prompt(current_question, answer)
-        return self.llm_client.get_completion(prompt)
+        response = self.llm_client.get_completion(prompt)
+        print(f"Evaluation response: {response}")
+        
+        # Parse the JSON response from the LLM
+        try:
+            return self.llm_client.extract_json_from_response(response)
+        except ValueError as e:
+            print(f"Failed to parse LLM response: {str(e)}")
+            # Fallback response if JSON parsing fails
+            return {
+                "response": "I apologize, but I'm having trouble processing that response. Could you please elaborate?",
+                "move_to_next": False
+            }
 
     def _create_questions_prompt(self, num_questions, cv_data):
         '''
@@ -63,12 +76,24 @@ class InterviewLLM:
         '''
 
         return f"""You are conducting a behavioral interview for a software engineering position. 
+        You are a senior software engineer with 10 years of experience. You must respond to the candidate's answer and provide a follow-up question if needed.
         Current question: {current_question}
         Candidate's answer: {answer}
         
-        Provide a response that:
-        1. Evaluates their answer on a scale of 1-10
-        2. Gives the reason for the score
+        Provide a response in valid JSON format with the following structure:
+        {{
+            "response": string,        // A follow-up question if needed, or brief acknowledgment if answer is complete
+            "move_to_next": boolean    // true if ready for next question, false if follow-up needed
+        }}
+        
+        Guidelines:
+        - If the answer needs clarification (move_to_next: false):
+          * Ask a specific follow-up question to get more details
+          * Focus on technical aspects that weren't fully explained
+        - If the answer is complete (move_to_next: true):
+          * Provide brief acknowledgment
+        
+        Return ONLY the JSON object, no additional text.
         """
 
     def _get_generic_questions(self):

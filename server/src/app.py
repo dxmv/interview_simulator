@@ -10,7 +10,7 @@ if __name__ == "__main__":
     app = Flask(__name__)
 
     # Allow requests from all origins
-    CORS(app)
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
     socketio = SocketIO(app, cors_allowed_origins="*")
 
     # Configure upload folder
@@ -22,6 +22,6 @@ if __name__ == "__main__":
     init_interview_routes(socketio)
 
     # Register blueprints
-    app.register_blueprint(cv_blueprint, url_prefix='/cv')
-    app.register_blueprint(interview_blueprint, url_prefix='/interview')
+    app.register_blueprint(cv_blueprint, url_prefix='/api/cv')
+    app.register_blueprint(interview_blueprint, url_prefix='/api/interview')
     socketio.run(app, debug=True)

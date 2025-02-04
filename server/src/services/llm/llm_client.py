@@ -36,7 +36,7 @@ class LLMClient:
         Get a single response from the LLM
         '''
         try:
-            print(f"Getting single response with payload: {payload}")
+            print(f"Getting single response")
             response = requests.post(self.ollama_api_url, json=payload)
             response.raise_for_status()
             print(f"Response: {response.json()['response']}")
