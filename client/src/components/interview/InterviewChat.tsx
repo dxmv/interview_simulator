@@ -20,6 +20,7 @@ const InterviewChat = ({ questions }: { questions: string[] }) => {
     const [newMessage, setNewMessage] = useState('');
     const socketService = SocketService.getInstance();
     const messagesEndRef = useRef<null | HTMLDivElement>(null);
+    const [isInterviewEnded, setIsInterviewEnded] = useState<boolean>(false);
 
     useEffect(() => {
         // Set up socket listeners
@@ -43,10 +44,28 @@ const InterviewChat = ({ questions }: { questions: string[] }) => {
             }
         };
 
+        const handleInterviewEnded = (data: { response: string }) => {
+            setMessages(prev => [...prev, {
+                id: Date.now().toString() + '_end',
+                content: "We're ending the interview now. Thank you for your time!",
+                sender: 'ai',
+                timestamp: new Date()
+            }]);
+            setMessages(prev => [...prev, {
+                id: Date.now().toString() + '_end',
+                content: data.response,
+                sender: 'ai',
+                timestamp: new Date()
+            }]);
+            setIsInterviewEnded(true);
+        };
+
         socketService.onMessage(handleMessage);
+        socketService.onInterviewEnded(handleInterviewEnded);
 
         return () => {
             socketService.getSocket().off('message', handleMessage);
+            socketService.getSocket().off('interview_ended', handleInterviewEnded);
         };
     }, []);
 
@@ -83,12 +102,13 @@ const InterviewChat = ({ questions }: { questions: string[] }) => {
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                    disabled={isInterviewEnded}
                     className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                 />
                 <PrimaryButton
                     onClick={handleSendMessage}
                     text="Send"
-                    disabled={!newMessage.trim()}
+                    disabled={!newMessage.trim() || isInterviewEnded}
                 />
             </div>
         </div>

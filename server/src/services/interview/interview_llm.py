@@ -17,7 +17,7 @@ class InterviewLLM:
                 cv_data = json.load(f)
 
             system_prompt = self._create_questions_prompt(num_questions, cv_data)
-            response = self.llm_client.get_completion(system_prompt, stream=True)
+            response = self.llm_client.get_completion(system_prompt, stream=True, temperature=0.5)
             questions = self.llm_client.extract_json_from_response(response)
             
             # Ensure exactly num_questions are returned
@@ -38,7 +38,7 @@ class InterviewLLM:
         Returns a dictionary containing the response and move_to_next flag
         '''
         prompt = self._create_evaluation_prompt(current_question, answer)
-        response = self.llm_client.get_completion(prompt)
+        response = self.llm_client.get_completion(prompt, temperature=2)
         print(f"Evaluation response: {response}")
         
         # Parse the JSON response from the LLM
@@ -57,7 +57,10 @@ class InterviewLLM:
         Create the prompt for the interview questions
         '''
 
-        return f"""You are an interviewer for a software engineering position. Generate exactly {num_questions} interview questions based on the candidate's CV. 
+        return f"""
+        You are conducting a behavioral interview for a software engineering position. 
+        You are a senior software engineer with 20 years of experience.
+        Generate exactly {num_questions} interview questions based on the candidate's CV. 
         No more, no less than {num_questions} questions.
         
         Rules for generating questions:
@@ -65,7 +68,8 @@ class InterviewLLM:
         2. Include questions about specific technologies they've used
         3. Ask about their projects and how they implemented certain features
         4. Include questions about their work experience and technical challenges
-        5. Return ONLY an array of strings with exactly {num_questions} questions in valid JSON format
+        5. Include questions about their soft skills and how they work in a team
+        6. Return ONLY an array of strings with exactly {num_questions} questions in valid JSON format
         
         CV Data:
         {json.dumps(cv_data, indent=2)}"""
@@ -75,23 +79,31 @@ class InterviewLLM:
         Create the prompt for the evaluation of the candidate's answer
         '''
 
-        return f"""You are conducting a behavioral interview for a software engineering position. 
-        You are a senior software engineer with 10 years of experience. You must respond to the candidate's answer and provide a follow-up question if needed.
+        return f"""
+        You are conducting a behavioral interview for a software engineering position. 
+        You are a senior software engineer with 20 years of experience. You must respond to the candidate's answer and provide a follow-up question if needed.
         Current question: {current_question}
         Candidate's answer: {answer}
         
         Provide a response in valid JSON format with the following structure:
         {{
             "response": string,        // A follow-up question if needed, or brief acknowledgment if answer is complete
-            "move_to_next": boolean    // true if ready for next question, false if follow-up needed
+            "move_to_next": boolean,   // true if ready for next question, false if follow-up needed
+            "end_interview": boolean   // true if interview should be concluded, false otherwise
         }}
         
         Guidelines:
+        - The response should be a follow-up question if the candidate's answer is not complete or needs clarification
+        - The response should be a brief acknowledgment if the answer is complete
         - If the answer needs clarification (move_to_next: false):
           * Ask a specific follow-up question to get more details
           * Focus on technical aspects that weren't fully explained
-        - If the answer is complete (move_to_next: true):
-          * Provide brief acknowledgment
+        - Set end_interview to true if:
+          * The candidate has demonstrated clear unsuitability for the role
+          * The responses indicate a significant mismatch in skills or experience
+          * The candidate is rude or disrespectful
+          * The candidate is not interested in the role
+          * The candidate uses inappropriate language
         
         Return ONLY the JSON object, no additional text.
         """

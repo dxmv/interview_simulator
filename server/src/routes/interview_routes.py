@@ -54,8 +54,10 @@ def handle_socket_events():
             
             # Get evaluation and next question
             evaluation_result = interview_service.evaluate_answer(answer)
+            if evaluation_result.get('end_interview'):
+                emit('interview_ended', {'response': evaluation_result['response']})
+                return
             next_question = interview_service.get_next_question() if evaluation_result.get('move_to_next') else None
-
             # Emit response matching client-side AnswerEvaluation type
             emit('message', {
                 'response': evaluation_result['response'],

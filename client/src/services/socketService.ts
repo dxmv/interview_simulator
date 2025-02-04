@@ -47,6 +47,10 @@ export class SocketService {
         this.socket.on('message', callback);
     }
 
+    public onInterviewEnded(callback: (data: { response: string }) => void) {
+        this.socket.on('interview_ended', callback);
+    }
+
 
     public disconnect() {
         this.socket.disconnect();
