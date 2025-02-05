@@ -2,13 +2,15 @@ import { useState, useEffect, useRef } from 'react';
 import { Message as MessageType } from '../../types/chat_types';
 import { PrimaryButton } from '../reusable/PrimaryButton';
 import { SocketService } from '../../services/socketService';
+import { SpeechService } from '../../services/speechService';
 import Message from '../reusable/Message';
 import { AnswerEvaluation, InterviewEvaluation } from '../../types/interview';
 
 const InterviewChat = ({ questions }: { questions: string[] }) => {
     const [messages, setMessages] = useState<MessageType[]>([{
         id: Date.now().toString(),
-        content: "Welcome to your technical interview!\nI'll be asking you questions based on your CV and experience.\nPlease provide detailed answers, and we'll discuss various aspects of your background.\n\n",
+        // content: "Welcome to your behavioral interview!\nI'll be asking you questions based on your CV and experience.\nPlease provide detailed answers, and we'll discuss various aspects of your background.\n\n",
+        content: "Welcome",
         sender: 'ai',
         timestamp: new Date()
     },{
@@ -19,8 +21,15 @@ const InterviewChat = ({ questions }: { questions: string[] }) => {
     }]);
     const [newMessage, setNewMessage] = useState('');
     const socketService = SocketService.getInstance();
+    const speechService = SpeechService.getInstance();
     const messagesEndRef = useRef<null | HTMLDivElement>(null);
     const [isInterviewEnded, setIsInterviewEnded] = useState<boolean>(false);
+
+    const handleSpeech =  (text: string) => {
+        if (true) {
+             speechService.speak(text);
+        }
+    };
 
     useEffect(() => {
         // Set up socket listeners
@@ -33,6 +42,9 @@ const InterviewChat = ({ questions }: { questions: string[] }) => {
                 timestamp: new Date()
             }]);
 
+            // Speak the AI's response
+            handleSpeech(data.response);
+
             // Only add next question if it exists
             if (data.next_question !== null) {
                 setMessages(prev => [...prev, {
@@ -41,6 +53,8 @@ const InterviewChat = ({ questions }: { questions: string[] }) => {
                     sender: 'ai',
                     timestamp: new Date()
                 }]);
+                // Speak the next question after a short delay
+                setTimeout(() => handleSpeech(data.next_question!), 1000);
             }
         };
 
@@ -51,16 +65,17 @@ const InterviewChat = ({ questions }: { questions: string[] }) => {
                 sender: 'ai',
                 timestamp: new Date()
             }]);
+            handleSpeech(data.response);
             
             if (data.evaluation) {
                 const evaluationContent = `
         Final Evaluation:
-        • Overall Score: ${data.evaluation.overall_score}/10
-        • Technical Strength: ${data.evaluation.technical_strength}
-        • Communication: ${data.evaluation.communication}
-        • Strengths: ${data.evaluation.areas_of_strength.join(', ')}
-        • Areas for Improvement: ${data.evaluation.areas_for_improvement.join(', ')}
-        • Hiring Recommendation: ${data.evaluation.hiring_recommendation}
+        Overall Score: ${data.evaluation.overall_score}/10 \n
+        Technical Strength: ${data.evaluation.technical_strength} \n
+        Communication: ${data.evaluation.communication} \n
+        Strengths: ${data.evaluation.areas_of_strength.join(', ')} \n
+        Areas for Improvement: ${data.evaluation.areas_for_improvement.join(', ')} \n
+        Hiring Recommendation: ${data.evaluation.hiring_recommendation} \n
         
         Summary: ${data.evaluation.summary}`;
         
@@ -70,10 +85,24 @@ const InterviewChat = ({ questions }: { questions: string[] }) => {
                     sender: 'system',
                     timestamp: new Date()
                 }]);
+                handleSpeech(evaluationContent);
             }
             
             setIsInterviewEnded(true);
         };
+
+        const initialSpeech = () => {
+            const initialMessage = messages[0];
+            const nextMessage = messages[1];
+            
+            if (initialMessage.content) {
+                speechService.speak(initialMessage.content);
+            }
+            if (nextMessage.content) {
+                speechService.speak(nextMessage.content);
+            }
+        };
+        initialSpeech();
 
         socketService.onMessage(handleMessage);
         socketService.onInterviewEnded(handleInterviewEnded);
@@ -81,6 +110,7 @@ const InterviewChat = ({ questions }: { questions: string[] }) => {
         return () => {
             socketService.getSocket().off('message', handleMessage);
             socketService.getSocket().off('interview_ended', handleInterviewEnded);
+            speechService.stop();
         };
     }, []);
 
@@ -90,7 +120,7 @@ const InterviewChat = ({ questions }: { questions: string[] }) => {
 
     const handleSendMessage = () => {
         if (!newMessage.trim()) return;
-
+        speechService.stop();
         // Only send to server, don't add message locally
         socketService.submitAnswer(newMessage);
         setMessages(prev => [...prev, {

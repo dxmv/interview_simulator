@@ -38,14 +38,14 @@ class InterviewService:
         
         # Store the answer in our map
         self.interview_data[self.current_question_index]["answer"] = answer
-        
+
         # If this was the last question, do final evaluation
-        if evaluation.get('move_to_next') and self.current_question_index == len(self.interview_data) - 1 or evaluation.get('end_interview'):
+        if (evaluation.get('move_to_next') and self.current_question_index == len(self.interview_data) - 1) or evaluation.get('end_interview'):
             questions = [data["question"] for data in self.interview_data.values()]
             answers = [data["answer"] for data in self.interview_data.values()]
             final_evaluation = self.llm_service._evaluate_whole_interview(questions, answers)
             return {
-                "response": "Thank you for completing the interview!",
+                "response": evaluation.get('response') if evaluation.get('end_interview') else "Thank you for completing the interview!",
                 "move_to_next": False,
                 "end_interview": True,
                 "final_evaluation": final_evaluation

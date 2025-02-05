@@ -7,15 +7,17 @@
 - [x] Evaluate answers
 - [x] Feedback at the end of the interview
 - [ ] Voice mode
-    - [ ] Voice to text
-    - [ ] Text to voice
+    - [ ] Speech to text
+    - [x] Text to speech
+    - [x] Free text to speech
+    - [ ] Visual feedback for voice waves
 - [ ] Interview type based on postion
-- [ ] Interview type based on postion from cv
 - [ ] Simulation & Training mode
 - [ ] Only one user, so we only need to store 1 interview history
 - [ ] Display interview history
 ---
 ## Next steps
+- [ ] Interview type based on postion from cv
 - [ ] Interview stats
     - [ ] Display a graph with the interview history grades
     - [ ] Summarize each interview

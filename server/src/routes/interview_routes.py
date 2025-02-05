@@ -61,9 +61,6 @@ def handle_socket_events():
                     return
                 
             next_question = interview_service.get_next_question() if evaluation_result.get('move_to_next') else None
-            if evaluation_result.get('move_to_next') and not next_question:
-                emit('interview_ended', {'response': 'Successfully ended interview'})
-                return
             
             emit('message', {
                 'response': evaluation_result['response'],
