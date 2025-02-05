@@ -35,11 +35,7 @@ def handle_socket_events():
             
             emit('interview_started', {
                 'total_questions': len(questions),
-                'questions': questions,
-                'current_question': {
-                    'index': 0,
-                    'text': questions[0]
-                }
+                'questions': [q['question'] for q in questions],
             })
         except Exception as e:
             print(f"Error starting interview: {str(e)}")
@@ -54,11 +50,21 @@ def handle_socket_events():
             
             # Get evaluation and next question
             evaluation_result = interview_service.evaluate_answer(answer)
+            
             if evaluation_result.get('end_interview'):
-                emit('interview_ended', {'response': evaluation_result['response']})
-                return
+                final_evaluation = evaluation_result.get('final_evaluation')
+                if final_evaluation:
+                    emit('interview_ended', {
+                        'response': evaluation_result['response'],
+                        'evaluation': final_evaluation
+                    })
+                    return
+                
             next_question = interview_service.get_next_question() if evaluation_result.get('move_to_next') else None
-            # Emit response matching client-side AnswerEvaluation type
+            if evaluation_result.get('move_to_next') and not next_question:
+                emit('interview_ended', {'response': 'Successfully ended interview'})
+                return
+            
             emit('message', {
                 'response': evaluation_result['response'],
                 'next_question': next_question,

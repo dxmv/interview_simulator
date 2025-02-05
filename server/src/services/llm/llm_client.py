@@ -1,6 +1,7 @@
 import requests
 import json
 from typing import Dict, Any, Optional
+import re
 
 class LLMClient:
     def __init__(self):
@@ -75,27 +76,25 @@ class LLMClient:
             print(f"Request failed: {str(e)}")
             raise ValueError(f"Failed to communicate with Ollama: {str(e)}")
 
-    def extract_json_from_response(self, response: str) -> Dict[str, Any]:
-        '''
-        Extract a JSON object from a response string
-        '''
-        print(f"Extracting JSON from response: {response}")
+    def extract_json_from_response(self, response: str) -> dict:
+        """
+        Extract JSON from LLM response, handling both array and object responses
+        """
         try:
-            start_idx = response.find('{')
-            end_idx = response.rfind('}') + 1
-            
-            # Try array if object not found
-            if start_idx == -1:
-                start_idx = response.find('[')
-                end_idx = response.rfind(']') + 1
-            
-            if start_idx == -1 or end_idx == 0:
-                raise ValueError("No valid JSON found in response")
-            
-            json_str = response[start_idx:end_idx]
-            return json.loads(json_str)
-            
-        except (json.JSONDecodeError, ValueError) as e:
-            print(f"Failed to parse JSON: {str(e)}")
-            print(f"Response text: {response}")
-            raise ValueError("Failed to get valid JSON from response") 
+            # First try to find JSON within the response using regex
+            json_match = re.search(r'\[.*\]|\{.*\}', response.strip(), re.DOTALL)
+            if json_match:
+                json_str = json_match.group()
+                # Parse the JSON string - could be array or object
+                parsed = json.loads(json_str)
+                # If it's an array and we expect an object, take first item
+                if isinstance(parsed, list) and len(parsed) > 0:
+                    return parsed  # Return the whole array if it's a list of questions
+                return parsed
+            raise ValueError("No JSON found in response")
+        except json.JSONDecodeError as e:
+            print(f"JSON decode error: {str(e)}")
+            raise ValueError(f"Invalid JSON format: {str(e)}")
+        except Exception as e:
+            print(f"Error extracting JSON: {str(e)}")
+            raise ValueError(f"Failed to extract JSON: {str(e)}") 

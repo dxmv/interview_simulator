@@ -3,7 +3,7 @@ import { Message as MessageType } from '../../types/chat_types';
 import { PrimaryButton } from '../reusable/PrimaryButton';
 import { SocketService } from '../../services/socketService';
 import Message from '../reusable/Message';
-import { AnswerEvaluation } from '../../types/interview';
+import { AnswerEvaluation, InterviewEvaluation } from '../../types/interview';
 
 const InterviewChat = ({ questions }: { questions: string[] }) => {
     const [messages, setMessages] = useState<MessageType[]>([{
@@ -44,19 +44,34 @@ const InterviewChat = ({ questions }: { questions: string[] }) => {
             }
         };
 
-        const handleInterviewEnded = (data: { response: string }) => {
-            setMessages(prev => [...prev, {
-                id: Date.now().toString() + '_end',
-                content: "We're ending the interview now. Thank you for your time!",
-                sender: 'ai',
-                timestamp: new Date()
-            }]);
+        const handleInterviewEnded = (data: { response: string; evaluation?: InterviewEvaluation }) => {
             setMessages(prev => [...prev, {
                 id: Date.now().toString() + '_end',
                 content: data.response,
                 sender: 'ai',
                 timestamp: new Date()
             }]);
+            
+            if (data.evaluation) {
+                const evaluationContent = `
+        Final Evaluation:
+        • Overall Score: ${data.evaluation.overall_score}/10
+        • Technical Strength: ${data.evaluation.technical_strength}
+        • Communication: ${data.evaluation.communication}
+        • Strengths: ${data.evaluation.areas_of_strength.join(', ')}
+        • Areas for Improvement: ${data.evaluation.areas_for_improvement.join(', ')}
+        • Hiring Recommendation: ${data.evaluation.hiring_recommendation}
+        
+        Summary: ${data.evaluation.summary}`;
+        
+                setMessages(prev => [...prev, {
+                    id: Date.now().toString() + '_evaluation',
+                    content: evaluationContent,
+                    sender: 'system',
+                    timestamp: new Date()
+                }]);
+            }
+            
             setIsInterviewEnded(true);
         };
 

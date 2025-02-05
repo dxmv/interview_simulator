@@ -11,16 +11,14 @@ class InterviewLLM:
         Generate interview questions based on the CV analysis using Mistral.
         '''
         try:
-            # Read the CV analysis from the JSON file
             cv_analysis_path = os.path.join('uploads', 'cv_analysis.json')
             with open(cv_analysis_path, 'r') as f:
                 cv_data = json.load(f)
 
             system_prompt = self._create_questions_prompt(num_questions, cv_data)
-            response = self.llm_client.get_completion(system_prompt, stream=True, temperature=0.5)
+            response = self.llm_client.get_completion(system_prompt, stream=True, temperature=0.2)
             questions = self.llm_client.extract_json_from_response(response)
             
-            # Ensure exactly num_questions are returned
             if len(questions) > num_questions:
                 questions = questions[:num_questions]
             elif len(questions) < num_questions:
@@ -37,93 +35,140 @@ class InterviewLLM:
         Evaluate the candidate's answer using the LLM.
         Returns a dictionary containing the response and move_to_next flag
         '''
+        print(f"Current question: {current_question}")
+        print(f"Answer: {answer}")
         prompt = self._create_evaluation_prompt(current_question, answer)
-        response = self.llm_client.get_completion(prompt, temperature=2)
+        response = self.llm_client.get_completion(prompt, temperature=0.7) 
         print(f"Evaluation response: {response}")
         
-        # Parse the JSON response from the LLM
         try:
             return self.llm_client.extract_json_from_response(response)
         except ValueError as e:
             print(f"Failed to parse LLM response: {str(e)}")
-            # Fallback response if JSON parsing fails
             return {
-                "response": "I apologize, but I'm having trouble processing that response. Could you please elaborate?",
-                "move_to_next": False
+                "response": "Could you please elaborate on that? I'd like to understand your approach better.",
+                "move_to_next": False,
+                "end_interview": False
             }
 
     def _create_questions_prompt(self, num_questions, cv_data):
         '''
         Create the prompt for the interview questions
         '''
+        prompt_for_questions = f"""
+        return exactly {num_questions} interview questions as a json array (no extraneous text). heed these constraints:
 
-        return f"""
-        You are conducting a behavioral interview for a software engineering position. 
-        You are a senior software engineer with 20 years of experience.
-        Generate exactly {num_questions} interview questions based on the candidate's CV. 
-        No more, no less than {num_questions} questions.
+        {{
+            "distribution": {{
+                "technical": 60,
+                "behavioral": 40
+            }},
+            "diversity_rules": [
+                "no repeated question forms",
+                "cover at least 3 distinct cv sections",
+                "vary the wording: how, what, explain, describe, etc"
+            ],
+            "cv_data": {json.dumps(cv_data)},
+            "output_format": {{
+                "type": "array<string>",
+                "length": {num_questions}
+            }}
+        }}
+
+        be sure each question references the candidate's actual tech or projects from cv_data in some. prompt them to give multi-part or deep answers. return ONLY the json array.
+        """
+        return prompt_for_questions
+
+    def _evaluate_whole_interview(self, questions, answers):
+        """
+        Evaluate the entire interview and provide a comprehensive assessment
+        """
+        prompt = f"""You are a senior technical interviewer. Analyze this complete interview and provide a final evaluation.
+        Return ONLY a JSON object with this structure:
+
+        {{
+            "overall_score": number,  // 1-10 rating
+            "technical_strength": string,  // Brief assessment of technical abilities
+            "communication": string,  // Brief assessment of communication skills
+            "areas_of_strength": string[], // 2-3 key strengths
+            "areas_for_improvement": string[], // 2-3 improvement areas
+            "hiring_recommendation": string, // "Strong Yes", "Yes", "Maybe", "No"
+            "summary": string  // 2-3 sentence overall summary
+        }}
+
+        Interview Content:
+        {json.dumps([{"question": q, "answer": a} for q, a in zip(questions, answers)])}
+        """
         
-        Rules for generating questions:
-        1. Focus on technical, behavioral and soft skills aspects and problem-solving
-        2. Include questions about specific technologies they've used
-        3. Ask about their projects and how they implemented certain features
-        4. Include questions about their work experience and technical challenges
-        5. Include questions about their soft skills and how they work in a team
-        6. Return ONLY an array of strings with exactly {num_questions} questions in valid JSON format
-        
-        CV Data:
-        {json.dumps(cv_data, indent=2)}"""
+        response = self.llm_client.get_completion(prompt, temperature=0.3)
+        return self.llm_client.extract_json_from_response(response)
 
     def _create_evaluation_prompt(self, current_question, answer):
-        '''
-        Create the prompt for the evaluation of the candidate's answer
-        '''
+        return f"""You are conducting a job interview for a software engineering role. Analyze this single response and output ONLY a JSON object.
 
-        return f"""
-        You are conducting a behavioral interview for a software engineering position. 
-        You are a senior software engineer with 20 years of experience. You must respond to the candidate's answer and provide a follow-up question if needed.
-        Current question: {current_question}
-        Candidate's answer: {answer}
-        
-        Provide a response in valid JSON format with the following structure:
-        {{
-            "response": string,        // A follow-up question if needed, or brief acknowledgment if answer is complete
-            "move_to_next": boolean,   // true if ready for next question, false if follow-up needed
-            "end_interview": boolean   // true if interview should be concluded, false otherwise
-        }}
-        
-        Guidelines:
-        - The response should be a follow-up question if the candidate's answer is not complete or needs clarification
-        - The response should be a brief acknowledgment if the answer is complete
-        - If the answer needs clarification (move_to_next: false):
-          * Ask a specific follow-up question to get more details
-          * Focus on technical aspects that weren't fully explained
-        - Set end_interview to true if:
-          * The candidate has demonstrated clear unsuitability for the role
-          * The responses indicate a significant mismatch in skills or experience
-          * The candidate is rude or disrespectful
-          * The candidate is not interested in the role
-          * The candidate uses inappropriate language
-        
-        Return ONLY the JSON object, no additional text.
-        """
+CURRENT QUESTION: "{current_question}"
+CANDIDATE ANSWER: "{answer}"
+
+OUTPUT THIS EXACT JSON STRUCTURE:
+{{
+    "response": string,      // Your reply to the candidate
+    "move_to_next": boolean, // Move to next question?
+    "end_interview": boolean // End the interview?
+}}
+
+EVALUATION CRITERIA:
+1. GOOD ANSWER (move_to_next = true) if:
+   - Clear, structured response
+   - Includes real examples
+   - Shows relevant experience
+   - Matches question asked
+   → Respond with brief positive acknowledgment
+
+2. NEEDS FOLLOW-UP (move_to_next = false) if:
+   - Answer is incomplete
+   - Missing examples
+   - Unclear explanation
+   - Off-topic response
+   → Ask ONE specific follow-up about missing information
+
+3. STOP INTERVIEW (end_interview = true) if:
+   - Completely inappropriate
+   - Shows clear dishonesty
+   - Extremely unprofessional
+   → End politely but firmly
+
+EXAMPLE RESPONSES:
+
+For incomplete answer:
+{{
+    "response": "You mentioned working on a team project - could you describe your specific role and contributions?",
+    "move_to_next": false,
+    "end_interview": false
+}}
+
+For good answer:
+{{
+    "response": "Thank you for that detailed example. I particularly appreciate how you highlighted the measurable results.",
+    "move_to_next": true,
+    "end_interview": false
+}}
+
+IMPORTANT:
+- Keep responses under 30 words
+- Be specific in follow-up questions
+- Stay professional and encouraging
+- Return ONLY the JSON object
+
+RETURN EXACTLY ONE JSON OBJECT WITH NO OTHER TEXT."""
 
     def _get_generic_questions(self):
-        '''
-        Get generic questions for the interview
-        '''
-
         return [
-            "Tell me about your most challenging technical project.",
-            "What is your experience with Python?",
-            "How do you approach problem-solving?",
-            "Describe a difficult bug you've fixed.",
-            "What are your thoughts on code quality?"
+            "Walk me through your most complex technical implementation.",
+            "Describe a time you had to make an architectural trade-off.",
+            "How do you ensure code quality in large projects?",
+            "Explain a challenging bug you resolved and your process.",
+            "Describe a successful cross-functional collaboration experience."
         ]
 
     def _get_fallback_questions(self, num_questions):
-        '''
-        Get fallback questions for the interview
-        '''
-
         return self._get_generic_questions()[:num_questions]

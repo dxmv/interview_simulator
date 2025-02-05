@@ -35,10 +35,6 @@ export class SocketService {
     public onInterviewStarted(callback: (data: {
         total_questions: number;
         questions: string[];
-        current_question: {
-            index: number;
-            text: string;
-        };
     }) => void) {
         this.socket.on('interview_started', callback);
     }

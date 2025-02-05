@@ -14,3 +14,18 @@ export interface AnswerEvaluation {
     next_question: string | null;
     sender: "ai";
 }
+
+export interface InterviewEvaluation {
+    overall_score: number;
+    technical_strength: string;
+    communication: string;
+    areas_of_strength: string[];
+    areas_for_improvement: string[];
+    hiring_recommendation: string;
+    summary: string;
+}
+
+export interface InterviewEndResponse {
+    response: string;
+    evaluation?: InterviewEvaluation;
+}
