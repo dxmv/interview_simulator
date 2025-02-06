@@ -5,7 +5,7 @@ import { SocketService } from '../../services/socketService';
 import { SpeechService } from '../../services/speechService';
 import { SpeechRecognitionService } from '../../services/speechRecognitionService';
 import { Mic, MicOff } from 'lucide-react';
-import Message from '../reusable/Message';
+import InterviewMessages from './InterviewMessages';
 import { AnswerEvaluation, InterviewEvaluation } from '../../types/interview';
 
 const InterviewChat = ({ questions }: { questions: string[] }) => {
@@ -157,13 +157,7 @@ const InterviewChat = ({ questions }: { questions: string[] }) => {
 
     return (
         <div className="flex flex-col h-screen max-w-3xl mx-auto p-4">
-            <div className="flex-1 overflow-y-auto mb-4 bg-white rounded-lg shadow p-4">
-                {messages.map((message) => (
-                    <Message key={message.id} message={message} />
-                ))}
-                <div ref={messagesEndRef} />
-            </div>
-            
+            <InterviewMessages messages={messages} messagesEndRef={messagesEndRef} />
             <div className="flex gap-2">
                 <input
                     type="text"
