@@ -19,7 +19,7 @@
 - [x] Only one user for now, so we only need to store 1 interview history
 - [x] Display interview history (home page)
 - [ ] Can look at previous interviews
-- [ ] Can delete previous interviews
+- [x] Can delete previous interviews
 - [ ] Simulation & Training mode
 ---
 ## Next steps

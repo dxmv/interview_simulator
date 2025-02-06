@@ -77,6 +77,7 @@ class InterviewService:
                 data['date'] = data['date']
             
             # Append the new interview data
+            data["id"] = len(interviews) + 1
             interviews.append(data)
 
             # Save the updated interviews back to the file
@@ -87,6 +88,22 @@ class InterviewService:
             return True
         except Exception as e:
             print(f"Error saving interview: {str(e)}")
+            return False
+
+    def delete_interview(self, id):
+        '''
+        Delete the interview with the given id.
+        '''
+        try:
+            file_path = '/Users/dimitrijestepanovic/Projects/WebApps/interviewer/server/src/uploads/interviews.json'
+            with open(file_path, 'r') as file:
+                interviews = json.load(file)
+            interviews = [interview for interview in interviews if interview["id"] != id]
+            with open(file_path, 'w') as file:
+                json.dump(interviews, file, indent=4, default=str)
+            return True
+        except Exception as e:
+            print(f"Error deleting interview: {str(e)}")
             return False
 
 

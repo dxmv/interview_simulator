@@ -17,7 +17,8 @@ function App() {
     fetchCvAnalysis();
   }, []);
 
-  return <>{!cvAnalysis ? <CVupload onUpload={() => {}} /> : <Interview />}</>
+  return <>{!cvAnalysis ? <CVupload onUpload={() => {}} /> : <Home />}</>
+
 }
 
 export default App

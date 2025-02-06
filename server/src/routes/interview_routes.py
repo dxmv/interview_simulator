@@ -93,10 +93,14 @@ def get_interviews():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@interview_blueprint.route('/<int:id>', methods=['DELETE'])
 def delete_interview(id: int):
     try:
-        interview_service.delete_interview(id)
-        return jsonify({'message': 'Interview deleted successfully'})
+        deleted = interview_service.delete_interview(id)
+        if deleted:
+            return jsonify({'message': 'Interview deleted successfully'})
+        else:
+            return jsonify({'error': 'Failed to delete interview'}), 500
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

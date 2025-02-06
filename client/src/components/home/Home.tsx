@@ -1,10 +1,11 @@
 import { useState,useEffect } from "react";
-import { SavedInterview } from "../../types/interview";
+import { SavedInterview as SavedInterviewType } from "../../types/interview";
 import { getInterviews } from "../../services/interviewServiceApi";
+import SavedInterview from "./SavedInterview";
 
 const Home = () => {
 
-    const [interviews, setInterviews] = useState<SavedInterview[]>([]);
+    const [interviews, setInterviews] = useState<SavedInterviewType[]>([]);
 
 
     useEffect(() => {
@@ -16,7 +17,7 @@ const Home = () => {
         fetchInterviews();
     }, []);
 
-    return <div>{interviews.map(interview => interview.summary)}</div>
+    return <div>{interviews.map(interview => <SavedInterview interview={interview} />)}</div>
 }
 
 export default Home;
