@@ -1,6 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 import { AnswerEvaluation } from '../types/interview';
-
+import { Message as ChatMessage } from '../types/chat_types';
 export class SocketService {
     private socket: typeof Socket;
     private static instance: SocketService;
@@ -30,6 +30,10 @@ export class SocketService {
 
     public submitAnswer(answer: string) {
         this.socket.emit('answer_submission', { answer });
+    }
+
+    public saveInterview(data: {messages: ChatMessage[], date: Date, summary: string, grade: number}) {
+        this.socket.emit('save_interview', data);
     }
 
     public onInterviewStarted(callback: (data: {

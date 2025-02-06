@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "messages": [
+            {
+                "id": "1738801664357",
+                "content": "Welcome",
+                "sender": "ai",
+                "timestamp": "2025-02-06T00:27:44.357Z"
+            },
+            {
+                "id": "17388016643571",
+                "content": "Tell me about yourself.",
+                "sender": "ai",
+                "timestamp": "2025-02-06T00:27:44.357Z"
+            }
+        ],
+        "date": "2025-02-06T00:28:49.991Z",
+        "summary": "The candidate demonstrated a lack of professionalism and was unable to answer basic interview questions.",
+        "grade": 1
+    }
+]

@@ -11,10 +11,16 @@
     - [x] Text to speech
     - [x] Free text to speech
     - [ ] Visual feedback for voice waves
-- [ ] Interview type based on postion
+- [ ] Interview type based on postion selected
+- [x] Save the interview at the end
+    - [x] All messages
+    - [x] Date
+    - [x] Summary and grade seperately
+- [x] Only one user for now, so we only need to store 1 interview history
+- [x] Display interview history (home page)
+- [ ] Can look at previous interviews
+- [ ] Can delete previous interviews
 - [ ] Simulation & Training mode
-- [ ] Only one user, so we only need to store 1 interview history
-- [ ] Display interview history
 ---
 ## Next steps
 - [ ] Interview type based on postion from cv

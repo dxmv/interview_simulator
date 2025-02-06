@@ -1,14 +1,13 @@
+import { SavedInterview } from "../types/interview";
 
-const API_URL = 'http://127.0.0.1:5000/interview';
+const API_URL = 'http://127.0.0.1:5000/api/interview';
 
-export const startInterview = async (numQuestions: number) => {
-    const response = await fetch(`${API_URL}/`, {
-        method: 'POST',
-        body: JSON.stringify({ num_questions: numQuestions }),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
+/**
+ * Get all interviews
+ * @returns all interviews
+ */
+export const getInterviews = async ():Promise<SavedInterview[]> => {
+    const response = await fetch(`${API_URL}/`);
     const data = await response.json();
     return data;
 };

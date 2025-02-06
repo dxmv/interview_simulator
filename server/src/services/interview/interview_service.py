@@ -53,6 +53,51 @@ class InterviewService:
             
         return evaluation
 
+    def save_interview(self, data)->bool:
+        '''
+        Save the interview to the database.
+        '''
+        print(f"Saving interview: {data}")
+        file_path = '/Users/dimitrijestepanovic/Projects/WebApps/interviewer/server/src/uploads/interviews.json'
+        try:
+            # Create the uploads directory if it doesn't exist
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+            # Load existing interviews or create a new list
+            interviews = []
+            if os.path.exists(file_path):
+                with open(file_path, 'r') as file:
+                    try:
+                        interviews = json.load(file)
+                    except json.JSONDecodeError:
+                        interviews = []
+
+            # Convert datetime to string for JSON serialization
+            if isinstance(data.get('date'), str):
+                data['date'] = data['date']
+            
+            # Append the new interview data
+            interviews.append(data)
+
+            # Save the updated interviews back to the file
+            with open(file_path, 'w') as file:
+                json.dump(interviews, file, indent=4, default=str)
+            
+            print(f"Interview saved to {file_path}")
+            return True
+        except Exception as e:
+            print(f"Error saving interview: {str(e)}")
+            return False
+
+
+    def get_interviews(self):
+        '''
+        Get all interviews.
+        '''
+        file_path = '/Users/dimitrijestepanovic/Projects/WebApps/interviewer/server/src/uploads/interviews.json'
+        with open(file_path, 'r') as file:
+            return json.load(file)
+
     def get_next_question(self):
         '''
         Get the next question in the interview.

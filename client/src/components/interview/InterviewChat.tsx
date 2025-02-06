@@ -89,6 +89,7 @@ const InterviewChat = ({ questions }: { questions: string[] }) => {
             }
             
             setIsInterviewEnded(true);
+            socketService.saveInterview({messages: messages, date: new Date(), summary: data.evaluation?.summary || '', grade: data.evaluation?.overall_score || 0});
         };
 
         const initialSpeech = () => {

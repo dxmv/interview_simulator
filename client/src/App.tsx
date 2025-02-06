@@ -4,6 +4,7 @@ import { CVupload } from "./components/cv-upload/CVupload"
 import { getCvAnalysis } from "./services/cvServiceApi";
 import { CVAnalysis } from "./types/cv_types";
 import Interview from "./components/interview/Interview";
+import Home from "./components/home/Home";
 
 function App() {
   const [cvAnalysis, setCvAnalysis] = useState<CVAnalysis | null>(null);
@@ -16,7 +17,7 @@ function App() {
     fetchCvAnalysis();
   }, []);
 
-  return <>{!cvAnalysis ? <CVupload onUpload={() => {}} /> : <Interview />}</>
+  return <>{!cvAnalysis ? <CVupload onUpload={() => {}} /> : <Home />}</>
 }
 
 export default App

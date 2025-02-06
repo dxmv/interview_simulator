@@ -1,3 +1,4 @@
+import { Message } from "./chat_types";
 export interface InterviewState {
     isStarted: boolean;
     currentQuestionIndex: number;
@@ -28,4 +29,12 @@ export interface InterviewEvaluation {
 export interface InterviewEndResponse {
     response: string;
     evaluation?: InterviewEvaluation;
+}
+
+export interface SavedInterview {
+    messages: Message[];
+    date: string;
+    summary: string;
+    grade: number;
+    id: number;
 }

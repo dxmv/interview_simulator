@@ -71,5 +71,35 @@ def handle_socket_events():
         except Exception as e:
             print(f"Error processing answer: {str(e)}")
             emit('error', {'message': f"Error processing answer: {str(e)}"})
+    
+    @socketio.on('save_interview')
+    def handle_save_interview(data):
+        '''Handle interview saving'''
+        try:
+            saved = interview_service.save_interview(data)
+            if saved:
+                emit('interview_saved', {'message': 'Interview saved successfully'})
+            else:
+                emit('error', {'message': 'Failed to save interview'})
+        except Exception as e:
+            print(f"Error saving interview: {str(e)}")
+            emit('error', {'message': f"Error saving interview: {str(e)}"})
+
+@interview_blueprint.route('/', methods=['GET'])
+def get_interviews():
+    try:
+        interviews = interview_service.get_interviews()
+        return jsonify(interviews)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def delete_interview(id: int):
+    try:
+        interview_service.delete_interview(id)
+        return jsonify({'message': 'Interview deleted successfully'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 
 
