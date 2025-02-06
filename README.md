@@ -7,9 +7,9 @@
 - [x] Evaluate answers
 - [x] Feedback at the end of the interview
 - [ ] Voice mode
-    - [ ] Speech to text
     - [x] Text to speech
     - [x] Free text to speech
+    - [x] Simple speech to text
     - [ ] Visual feedback for voice waves
 - [ ] Interview type based on postion selected
 - [x] Save the interview at the end

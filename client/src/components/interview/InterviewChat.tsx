@@ -3,6 +3,8 @@ import { Message as MessageType } from '../../types/chat_types';
 import { PrimaryButton } from '../reusable/PrimaryButton';
 import { SocketService } from '../../services/socketService';
 import { SpeechService } from '../../services/speechService';
+import { SpeechRecognitionService } from '../../services/speechRecognitionService';
+import { Mic, MicOff } from 'lucide-react';
 import Message from '../reusable/Message';
 import { AnswerEvaluation, InterviewEvaluation } from '../../types/interview';
 
@@ -24,6 +26,8 @@ const InterviewChat = ({ questions }: { questions: string[] }) => {
     const speechService = SpeechService.getInstance();
     const messagesEndRef = useRef<null | HTMLDivElement>(null);
     const [isInterviewEnded, setIsInterviewEnded] = useState<boolean>(false);
+    const [isListening, setIsListening] = useState(false);
+    const speechRecognitionService = SpeechRecognitionService.getInstance();
 
     const handleSpeech =  (text: string) => {
         if (true) {
@@ -133,6 +137,24 @@ const InterviewChat = ({ questions }: { questions: string[] }) => {
         setNewMessage('');
     };
 
+    const handleVoiceInput = () => {
+        if (isListening) {
+            speechRecognitionService.stopListening();
+            setIsListening(false);
+            return;
+        }
+
+        setIsListening(true);
+        speechRecognitionService.startListening(
+            (text) => {
+                setNewMessage((prev) => prev + text);
+            },
+            () => {
+                setIsListening(false);
+            }
+        );
+    };
+
     return (
         <div className="flex flex-col h-screen max-w-3xl mx-auto p-4">
             <div className="flex-1 overflow-y-auto mb-4 bg-white rounded-lg shadow p-4">
@@ -151,6 +173,15 @@ const InterviewChat = ({ questions }: { questions: string[] }) => {
                     disabled={isInterviewEnded}
                     className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                 />
+                <button
+                    onClick={handleVoiceInput}
+                    disabled={isInterviewEnded}
+                    className={`p-2 rounded-md ${
+                        isListening ? 'bg-red-500' : 'bg-blue-500'
+                    } text-white`}
+                >
+                    {isListening ? <MicOff size={24} /> : <Mic size={24} />}
+                </button>
                 <PrimaryButton
                     onClick={handleSendMessage}
                     text="Send"
