@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import Register from "./components/register/Register";
+import Login from "./components/login/Login";
 
 function App() {
   // const [cvAnalysis, setCvAnalysis] = useState<CVAnalysis | null>(null);
@@ -13,7 +14,7 @@ function App() {
   //   fetchCvAnalysis();
   // }, []);
 
-  return <Register />
+  return <Login />
 
 }
 

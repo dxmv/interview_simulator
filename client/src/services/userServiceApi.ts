@@ -45,7 +45,7 @@ export const register = async (userData: RegisterData): Promise<UserResponse> =>
  * @param credentials - login credentials
  * @returns user data if login successful
  */
-export const login = async (credentials: Omit<User, 'id'>): Promise<UserResponse> => {
+export const login = async (credentials: {email: string, password: string}): Promise<UserResponse> => {
     const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: {
