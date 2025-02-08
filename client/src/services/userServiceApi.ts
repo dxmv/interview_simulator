@@ -1,4 +1,5 @@
 import { User } from "../types/user_types";
+import { storeToken } from "../auth/local_storage";
 
 const API_URL = 'http://127.0.0.1:5000/api/user';
 
@@ -40,12 +41,13 @@ export const register = async (userData: RegisterData): Promise<UserResponse> =>
     return response.json();
 };
 
+
 /**
  * Login a user
  * @param credentials - login credentials
  * @returns user data if login successful
  */
-export const login = async (credentials: {email: string, password: string}): Promise<UserResponse> => {
+export const login = async (credentials: LoginData): Promise<UserResponse> => {
     const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: {
@@ -59,7 +61,9 @@ export const login = async (credentials: {email: string, password: string}): Pro
         throw new Error(error.error || 'Login failed');
     }
 
-    return response.json();
+    const data = await response.json();
+    storeToken(data.token);
+    return data.user;
 };
 
 /**

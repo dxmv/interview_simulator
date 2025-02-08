@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from flask_jwt_extended import create_access_token
 
 # Initialize SQLAlchemy instance
 db = SQLAlchemy()
@@ -26,4 +27,7 @@ class User(db.Model):
             'email': self.email,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None
-        } 
+        }
+
+    def get_token(self):
+        return create_access_token(identity=self.id) 

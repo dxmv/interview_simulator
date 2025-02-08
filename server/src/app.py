@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 from dotenv import load_dotenv
 from database import db, User
+from flask_jwt_extended import JWTManager
 
 # import routes
 from routes.cv_routes import cv_blueprint, init_cv_routes
@@ -50,4 +51,9 @@ if __name__ == "__main__":
     app.register_blueprint(cv_blueprint, url_prefix='/api/cv')
     app.register_blueprint(interview_blueprint, url_prefix='/api/interview')
     app.register_blueprint(user_blueprint, url_prefix='/api/user')
+
+    # Configure JWT
+    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'your-secret-key')  # Change in production
+    jwt = JWTManager(app)
+
     socketio.run(app, debug=True)
