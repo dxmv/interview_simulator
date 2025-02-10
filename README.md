@@ -23,16 +23,19 @@
     - [ ] When inapropriate message is sent, we wait for the evaluation to be done before sending the next message
     - [ ] Only saves the first few messages
     - [ ] Routes & ux
+    - [ ] Generate questions based on the cv again
+    - [ ] Error if llama isn't started
 ---
 ## Next steps
 
 - [x] Authentication & Authorization
-- [ ] Database models & use of database
+- [x] Database models & use of database
     - [x] User
     - [x] CV
-    - [ ] Interview
-    - [ ] Save cv for user
-    - [ ] Save interviews for user
+    - [x] Interview
+    - [x] Save cv for user
+    - [x] Save interviews for user
+- [ ] Router on front-end
 - [ ] voice mode for the interview
     - [ ] Visual feedback for voice waves
 - [ ] Loading messages for all requests

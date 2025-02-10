@@ -12,7 +12,6 @@ const Interview = () => {
         try {
             socketService.startInterview(numQuestions);
             socketService.onInterviewStarted((data) => {
-                console.log(data);
                 setQuestions(data.questions);
                 setStep(2);
             });

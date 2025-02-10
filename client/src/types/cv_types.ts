@@ -6,6 +6,8 @@ export interface CVAnalysis {
     education: Education[],
     work_experience: WorkExperience[],
     projects: Project[],
+    created_at: string;
+    updated_at: string;
 }
 
 export interface PersonalInfo {

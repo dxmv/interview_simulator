@@ -9,13 +9,12 @@ def jwt_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         try:
-            # Verify the JWT token in the request
-            verify_jwt_in_request()
-            # Optionally, log the identity of the authenticated user
-            identity = get_jwt_identity()
-            print(f"Authenticated user: {identity}")
+            verify_jwt_in_request()  # This will verify the 'Bearer' token
+            current_user_id = get_jwt_identity()
+            if not current_user_id:
+                return jsonify({'error': 'Invalid token'}), 401
             return fn(*args, **kwargs)
         except Exception as e:
-            print(f"Unexpected error: {str(e)}")
+            print(f"Authentication error: {str(e)}")
             return jsonify({'error': 'Authentication failed'}), 401
     return wrapper

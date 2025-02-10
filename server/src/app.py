@@ -59,4 +59,4 @@ if __name__ == "__main__":
     app.config['JWT_IDENTITY_CLAIM'] = 'sub'
     jwt = JWTManager(app)
 
-    socketio.run(app, debug=True)
+    socketio.run(app, debug=True, port=5000)

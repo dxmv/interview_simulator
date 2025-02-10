@@ -1,7 +1,9 @@
 from flask import Blueprint, request, jsonify
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, disconnect
 from services.interview.interview_service import InterviewService
 from flask_cors import cross_origin
+from utils.auth import jwt_required
+from flask_jwt_extended import decode_token
 
 interview_blueprint = Blueprint('interview', __name__)
 interview_service = None
@@ -13,12 +15,24 @@ def init_interview_routes(socket: SocketIO):
     socketio = socket
     handle_socket_events()
 
+def verify_socket_token(data):
+    """Verify JWT token from socket data"""
+    try:
+        auth = data.get('token')
+        if not auth or not auth.startswith('Bearer '):
+            print("No token or invalid token format")
+            return None
+        
+        token = auth.split(' ')[1]  # Get the token part after 'Bearer '
+        decoded_token = decode_token(token)  # Decode the token
+        user_id = decoded_token.get('sub')  # Extract user_id from the token
+        print(f"Verified user_id: {user_id}")  # Debug log
+        return user_id
+    except Exception as e:
+        print(f"Socket authentication error: {str(e)}")
+        return None
+
 def handle_socket_events():
-    @socketio.on('connect')
-    def handle_connect():
-        '''Handle the connection event'''
-        print("Client connected")
-        emit('connected', {'data': 'Connected successfully'})
 
     @socketio.on('disconnect')
     def handle_disconnect():
@@ -46,9 +60,6 @@ def handle_socket_events():
         '''Handle candidate's answer submission'''
         try:
             answer = data.get('answer')
-            print(f"Received answer: {answer}")
-            
-            # Get evaluation and next question
             evaluation_result = interview_service.evaluate_answer(answer)
             
             if evaluation_result.get('end_interview'):
@@ -76,6 +87,16 @@ def handle_socket_events():
     def handle_save_interview(data):
         '''Handle interview saving'''
         try:
+            print("Received save_interview data:", data)  # Debug log
+            user_id = verify_socket_token(data)
+            print(f"User ID from token: {user_id}")  # Debug log
+            
+            if not user_id:
+                print("No user_id found in token")  # Debug log
+                emit('error', {'message': 'Authentication required'})
+                return
+            
+            data['user_id'] = user_id  # Add user_id to the data
             saved = interview_service.save_interview(data)
             if saved:
                 emit('interview_saved', {'message': 'Interview saved successfully'})
@@ -86,6 +107,7 @@ def handle_socket_events():
             emit('error', {'message': f"Error saving interview: {str(e)}"})
 
 @interview_blueprint.route('/', methods=['GET'])
+@jwt_required
 def get_interviews():
     try:
         interviews = interview_service.get_interviews()
@@ -94,6 +116,7 @@ def get_interviews():
         return jsonify({'error': str(e)}), 500
 
 @interview_blueprint.route('/<int:id>', methods=['DELETE'])
+@jwt_required
 def delete_interview(id: int):
     try:
         deleted = interview_service.delete_interview(id)

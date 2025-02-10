@@ -1,14 +1,12 @@
-import requests
-import json
-import os
+from database import db, Interview
 from services.interview.interview_llm import InterviewLLM
+from datetime import datetime
 
 class InterviewService:
     def __init__(self):
         self.num_questions = 0
         self.interview_data = {}  # Map to store questions and answers
         self.current_question_index = 0
-        self.ollama_api_url = "http://localhost:11434/api/generate"
         self.llm_service = InterviewLLM()
 
     def start_interview(self, num_questions):
@@ -53,67 +51,70 @@ class InterviewService:
             
         return evaluation
 
-    def save_interview(self, data)->bool:
+    def save_interview(self, data) -> bool:
         '''
         Save the interview to the database.
         '''
-        print(f"Saving interview: {data}")
-        file_path = '/Users/dimitrijestepanovic/Projects/WebApps/interviewer/server/src/uploads/interviews.json'
         try:
-            # Create the uploads directory if it doesn't exist
-            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            user_id = data.get('user_id')
+            if not user_id:
+                raise ValueError('User not authenticated')
 
-            # Load existing interviews or create a new list
-            interviews = []
-            if os.path.exists(file_path):
-                with open(file_path, 'r') as file:
-                    try:
-                        interviews = json.load(file)
-                    except json.JSONDecodeError:
-                        interviews = []
+            # Create new interview
+            new_interview = Interview(
+                user_id=user_id,
+                messages=data.get('messages', []),
+                date=datetime.utcnow(),
+                summary=data.get('summary'),
+                grade=data.get('grade')
+            )
 
-            # Convert datetime to string for JSON serialization
-            if isinstance(data.get('date'), str):
-                data['date'] = data['date']
+            print(new_interview)  # Debug log
+            db.session.add(new_interview)
+            db.session.commit()
+            print("Interview saved successfully")  # Debug log
             
-            # Append the new interview data
-            data["id"] = len(interviews) + 1
-            interviews.append(data)
-
-            # Save the updated interviews back to the file
-            with open(file_path, 'w') as file:
-                json.dump(interviews, file, indent=4, default=str)
-            
-            print(f"Interview saved to {file_path}")
             return True
         except Exception as e:
             print(f"Error saving interview: {str(e)}")
+            db.session.rollback()
             return False
 
-    def delete_interview(self, id):
+    def delete_interview(self, interview_id):
         '''
         Delete the interview with the given id.
         '''
         try:
-            file_path = '/Users/dimitrijestepanovic/Projects/WebApps/interviewer/server/src/uploads/interviews.json'
-            with open(file_path, 'r') as file:
-                interviews = json.load(file)
-            interviews = [interview for interview in interviews if interview["id"] != id]
-            with open(file_path, 'w') as file:
-                json.dump(interviews, file, indent=4, default=str)
+            user_id = get_jwt_identity()
+            if not user_id:
+                raise ValueError('User not authenticated')
+
+            interview = Interview.query.filter_by(id=interview_id, user_id=user_id).first()
+            if not interview:
+                raise ValueError('Interview not found')
+
+            db.session.delete(interview)
+            db.session.commit()
             return True
         except Exception as e:
             print(f"Error deleting interview: {str(e)}")
+            db.session.rollback()
             return False
-
 
     def get_interviews(self):
         '''
-        Get all interviews.
+        Get all interviews for the current user.
         '''
-        file_path = '/Users/dimitrijestepanovic/Projects/WebApps/interviewer/server/src/uploads/interviews.json'
-        with open(file_path, 'r') as file:
-            return json.load(file)
+        try:
+            user_id = get_jwt_identity()
+            if not user_id:
+                raise ValueError('User not authenticated')
+
+            interviews = Interview.query.filter_by(user_id=user_id).order_by(Interview.date.desc()).all()
+            return [interview.to_dict() for interview in interviews]
+        except Exception as e:
+            print(f"Error getting interviews: {str(e)}")
+            return []
 
     def get_next_question(self):
         '''

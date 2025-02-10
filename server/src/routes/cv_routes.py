@@ -38,6 +38,7 @@ def save_cv():
 def get_cv_analysis():
     '''Get CV analysis for current user'''
     try:
+        print("get cv analysis")
         cv_analysis = cv_service.get_cv_analysis()
         return jsonify(cv_analysis)
     except ValueError as e:
