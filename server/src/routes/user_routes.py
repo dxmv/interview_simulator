@@ -27,15 +27,14 @@ def login():
     Login a user
     '''
     try:
-        print(request.json)
         if not request.json or not 'email' in request.json or not 'password' in request.json:
             raise ValueError('Email and password are required')
             
         user = user_service.login_user(request.json)
         token = user.get_token()
         return jsonify({
-            'user': user.to_dict(),
-            'token': token
+            'token': token,
+            'user': user.to_dict()
         }), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 400

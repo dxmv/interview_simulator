@@ -5,14 +5,18 @@ const API_URL = 'http://127.0.0.1:5000/api/cv/'
  * @param file the CV file to upload
  * @returns the CV analysis
  */
-export const uploadCV = async (file: File) => {
+export const uploadCV = async (file: File, token: string) => {
     const formData = new FormData()
-    const blob = new Blob([file], { type: file.type })
-    formData.append('file',blob, file.name)
+    formData.append('file', file)
     
     const response = await fetch(`${API_URL}upload`, {
         method: 'POST',
-        body: formData
+        body: formData,
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+        // Don't set Content-Type header - let the browser set it automatically
+        // for multipart/form-data with the correct boundary
     })
     
     if (!response.ok) {
@@ -27,9 +31,18 @@ export const uploadCV = async (file: File) => {
  * Get the CV analysis
  * @returns the CV analysis
  */
-export const getCvAnalysis = async () => {
+export const getCvAnalysis = async (token: string) => {
     const response = await fetch(`${API_URL}`, {
-        method: 'GET'
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
     })
+    
+    if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to get CV analysis')
+    }
+    
     return response.json()
 }

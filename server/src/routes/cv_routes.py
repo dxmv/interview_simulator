@@ -1,28 +1,31 @@
 from flask import Blueprint, request, jsonify
 from services.cv.cv_service import CVService
+from utils.auth import jwt_required
 
 cv_blueprint = Blueprint('cv', __name__)
 cv_service = None
 
-def init_cv_routes(upload_folder):
+def init_cv_routes():
     global cv_service
-    cv_service = CVService(upload_folder)
+    cv_service = CVService()
 
 @cv_blueprint.route("/upload", methods=['POST'])
-def upload_file():
+@jwt_required
+def save_cv():
     '''
-    Upload a cv to the server
+    Save a cv to the database
     '''
     try:
+        print("s")
         if 'file' not in request.files:
             return jsonify({'error': 'No file part'}), 400
         
         file = request.files['file']
-        filename = cv_service.save_file(file)
+        cv = cv_service.save_cv(file)
         
         return jsonify({
-            'message': 'File uploaded successfully',
-            'filename': filename
+            'message': 'CV analyzed successfully',
+            'cv': cv
         }), 200
         
     except ValueError as e:
@@ -31,9 +34,13 @@ def upload_file():
         return jsonify({'error': str(e)}), 500
 
 @cv_blueprint.route('/', methods=['GET'])
+@jwt_required
 def get_cv_analysis():
+    '''Get CV analysis for current user'''
     try:
         cv_analysis = cv_service.get_cv_analysis()
-        return jsonify({'cv_analysis': cv_analysis})
+        return jsonify(cv_analysis)
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500

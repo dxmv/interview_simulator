@@ -4,6 +4,7 @@ import Register from "./components/register/Register";
 import Login from "./components/login/Login";
 import { getToken } from "./auth/local_storage";
 import Home from "./components/home/Home";
+import { CVupload } from "./components/cv-upload/CVupload";
 function App() {
   // const [cvAnalysis, setCvAnalysis] = useState<CVAnalysis | null>(null);
 
@@ -17,7 +18,7 @@ function App() {
 
   const token = getToken();
   if (token) {
-    return <Home />
+    return <CVupload onUpload={() => {}} />
   }
 
   return <Login />

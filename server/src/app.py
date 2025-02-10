@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 from database import db, User
 from flask_jwt_extended import JWTManager
-
+from datetime import timedelta
 # import routes
 from routes.cv_routes import cv_blueprint, init_cv_routes
 from routes.interview_routes import interview_blueprint, init_interview_routes
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    
+
     # Initialize database
     db.init_app(app)
     
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
     # Initialize routes
-    init_cv_routes(UPLOAD_FOLDER)
+    init_cv_routes()
     init_interview_routes(socketio)
     init_user_routes(db)
 
@@ -54,6 +54,9 @@ if __name__ == "__main__":
 
     # Configure JWT
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'your-secret-key')  # Change in production
+    app.config['JWT_TOKEN_LOCATION'] = ['headers']
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)  # Token expires in 1 hour
+    app.config['JWT_IDENTITY_CLAIM'] = 'sub'
     jwt = JWTManager(app)
 
     socketio.run(app, debug=True)

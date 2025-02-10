@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { login } from '../../services/userServiceApi';
+import { storeToken } from '../../auth/local_storage';
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -24,6 +25,7 @@ const Login = () => {
             const response = await login(formData);
             // Handle successful login (e.g., store user data, redirect)
             console.log('Login successful:', response);
+            storeToken(response.token);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Login failed');
         }

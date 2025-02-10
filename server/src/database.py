@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_jwt_extended import create_access_token
+from sqlalchemy.dialects.postgresql import JSONB
 
 # Initialize SQLAlchemy instance
 db = SQLAlchemy()
@@ -30,4 +31,36 @@ class User(db.Model):
         }
 
     def get_token(self):
-        return create_access_token(identity=self.id) 
+        return create_access_token(identity=str(self.id))
+
+class CV(db.Model):
+    __tablename__ = 'cvs'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
+    personal_info = db.Column(JSONB, nullable=False)
+    skills = db.Column(JSONB, nullable=False)
+    education = db.Column(JSONB, nullable=False)
+    work_experience = db.Column(JSONB, nullable=False)
+    projects = db.Column(JSONB, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationship with User
+    user = db.relationship('User', backref=db.backref('cv', uselist=False))
+
+    def __repr__(self):
+        return f'<CV {self.user_id}>'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'personal_info': self.personal_info,
+            'skills': self.skills,
+            'education': self.education,
+            'work_experience': self.work_experience,
+            'projects': self.projects,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
+        } 

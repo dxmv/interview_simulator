@@ -9,14 +9,19 @@ interface RegisterData {
     password: string;
 }
 
-interface LoginData {
-    email: string;
-    password: string;
-}
-
 interface UserResponse {
     email: string;
     name: string;
+}
+
+interface LoginResponse {
+    token: string;
+    user?: {
+        id: number;
+        email: string;
+        created_at: string;
+        updated_at: string;
+    };
 }
 
 /**
@@ -47,7 +52,7 @@ export const register = async (userData: RegisterData): Promise<UserResponse> =>
  * @param credentials - login credentials
  * @returns user data if login successful
  */
-export const login = async (credentials: LoginData): Promise<UserResponse> => {
+export const login = async (credentials: { email: string; password: string }): Promise<LoginResponse> => {
     const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: {
@@ -62,8 +67,11 @@ export const login = async (credentials: LoginData): Promise<UserResponse> => {
     }
 
     const data = await response.json();
-    storeToken(data.token);
-    return data.user;
+    if (!data.token) {
+        throw new Error('No token received from server');
+    }
+
+    return data;
 };
 
 /**

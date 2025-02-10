@@ -26,9 +26,14 @@
 ---
 ## Next steps
 
-- [ ] Authentication & Authorization
-- [ ] Database
-- [ ] Visual mode for the interview
+- [x] Authentication & Authorization
+- [ ] Database models & use of database
+    - [x] User
+    - [x] CV
+    - [ ] Interview
+    - [ ] Save cv for user
+    - [ ] Save interviews for user
+- [ ] voice mode for the interview
     - [ ] Visual feedback for voice waves
 - [ ] Loading messages for all requests
 - [ ] Better ui & ux

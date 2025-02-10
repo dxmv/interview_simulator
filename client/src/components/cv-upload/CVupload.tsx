@@ -2,7 +2,7 @@ import { FC, useState } from 'react'
 import { PrimaryButton } from '../reusable/PrimaryButton'
 import { UploadDocument } from './UploadDocument';
 import { uploadCV } from '../../services/cvServiceApi';
-
+import { getToken } from '../../auth/local_storage';
 interface CVuploadProps {
   onUpload: (file: File) => void
 }
@@ -13,7 +13,12 @@ export const CVupload: FC<CVuploadProps> = () => {
     const handleUpload = async () => {
         if (file) {
             try {
-                const response = await uploadCV(file)
+                const token = getToken();
+                console.log(token)
+                if (!token) {
+                    throw new Error('No token found');
+                }
+                const response = await uploadCV(file, token)
                 console.log(response)
             } catch (error) {
                 console.error(error)

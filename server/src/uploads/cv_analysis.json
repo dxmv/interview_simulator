@@ -1,6 +1,12 @@
 {
   "personal_info": {
-    "name": "Frying Pan"
+    "name": "Frying Pan",
+    "email": "fryingpan@gmail.com",
+    "phone": "+1234567890",
+    "location": "Montreal, QC",
+    "linkedin": "https://www.linkedin.com/in/fryingpan",
+    "github": "https://github.com/fryingpan",
+    "website": "https://fryingpan.com"
   },
   "skills": {
     "technical": [
