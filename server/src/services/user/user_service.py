@@ -1,4 +1,5 @@
 from database import User
+from flask_jwt_extended import get_jwt_identity
 
 class UserService:
 
@@ -12,8 +13,12 @@ class UserService:
         self.db.session.commit()
         return new_user
 
-    def get_user(self, id: int):
-        return self.db.get_or_404(User, id)
+    def get_user(self):
+        user_id = get_jwt_identity()
+        print(user_id)
+        if user_id is None:
+            raise ValueError('User not found')
+        return User.query.filter_by(id=user_id).first()
 
     def update_user(self, user):
         pass

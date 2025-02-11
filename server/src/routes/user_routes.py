@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from services.user.user_service import UserService
-
+from utils.auth import jwt_required
 user_blueprint = Blueprint('user', __name__)
 user_service = None
 
@@ -42,17 +42,20 @@ def login():
         return jsonify({'error': str(e)}), 500
 
 @user_blueprint.route("/profile", methods=['GET'])
+@jwt_required
 def get_profile():
     '''
     Get user profile
     '''
     try:
         print("Getting profile")
-        user = user_service.get_user(1)
+        user = user_service.get_user()
         return jsonify({'user': user.to_dict()}), 200
     except ValueError as e:
+        print(e)
         return jsonify({'error': str(e)}), 400
     except Exception as e:
+        print(e)
         return jsonify({'error': str(e)}), 500
 
 @user_blueprint.route("/profile", methods=['PUT'])

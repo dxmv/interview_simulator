@@ -1,6 +1,7 @@
 from database import db, Interview
 from services.interview.interview_llm import InterviewLLM
 from datetime import datetime
+from flask_jwt_extended import get_jwt_identity
 
 class InterviewService:
     def __init__(self):

@@ -43,7 +43,6 @@ Do not include any explanations or additional text, only return the valid JSON o
         '''
         Analyzes the CV and saves it to the database (without saving the file)
         '''
-        print(file)
         if not file or file.filename == '':
             raise ValueError('No file selected')
 

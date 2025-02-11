@@ -110,6 +110,7 @@ def handle_socket_events():
 @jwt_required
 def get_interviews():
     try:
+        print("Getting interviews")
         interviews = interview_service.get_interviews()
         return jsonify(interviews)
     except Exception as e:

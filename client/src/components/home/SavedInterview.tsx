@@ -3,16 +3,15 @@ import { Trash2, Star, ChevronRight } from 'lucide-react';
 import { format } from "date-fns";
 import { useState } from "react";
 import InterviewModal from "../interview/InterviewModal";
+import { deleteInterview } from "../../services/interviewServiceApi";
+import { getToken } from "../../auth/local_storage";
 
 const SavedInterview = ({ interview }: { interview: SavedInterviewType }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const deleteInterview = async () => {
+    const handleDelete = async () => {
         try {
-            const response = await fetch(`http://127.0.0.1:5000/api/interview/${interview.id}`, {
-                method: 'DELETE',
-            });
-            if (!response.ok) throw new Error('Failed to delete interview');
+            await deleteInterview(interview.id, getToken() || "");
             // Trigger refresh of parent component
             window.location.reload();
         } catch (error) {
@@ -49,7 +48,7 @@ const SavedInterview = ({ interview }: { interview: SavedInterviewType }) => {
 
                     <div className="flex items-center gap-2 ml-4">
                         <button
-                            onClick={deleteInterview}
+                            onClick={handleDelete}
                             className="p-2 text-gray-400 hover:text-red-500 rounded-full hover:bg-red-50 transition-colors"
                             aria-label="Delete interview"
                         >

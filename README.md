@@ -25,6 +25,7 @@
     - [ ] Routes & ux
     - [ ] Generate questions based on the cv again
     - [ ] Error if llama isn't started
+    - [ ] Can multiple users use it at the same time?
 ---
 ## Next steps
 
@@ -35,10 +36,10 @@
     - [x] Interview
     - [x] Save cv for user
     - [x] Save interviews for user
-- [ ] Router on front-end
-- [ ] voice mode for the interview
+- [x] Router on front-end
+- [x] Protected routes
+- [ ] Voice mode for the interview
     - [ ] Visual feedback for voice waves
-- [ ] Loading messages for all requests
 - [ ] Better ui & ux
 - [ ] Dark & light mode
 - [ ] Interview type based on postion from cv
@@ -48,7 +49,10 @@
     - [ ] Summarize each interview
 - [ ] Simulation & Training mode
 - [ ] Can change cv
-- [ ] Can multiple users use it at the same time?
+- [ ] Loading messages for all requests
+- [ ] Loading page
+- [ ] Error page
+- [ ] Better voice for ai
 - [ ] AI coach
     - [ ] AI coach based on the interview history
     - [ ] AI coach based on the cv

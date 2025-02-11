@@ -1,20 +1,15 @@
+import { Outlet } from 'react-router-dom';
 
-import Interview from "./components/interview/Interview";
 function App() {
-  // const [cvAnalysis, setCvAnalysis] = useState<CVAnalysis | null>(null);
-
-  // useEffect(() => {
-  //   const fetchCvAnalysis = async () => {
-  //     const cvAnalysis = await getCvAnalysis();
-  //     setCvAnalysis(cvAnalysis);
-  //   }
-  //   fetchCvAnalysis();
-  // }, []);
-
-
-  return <Interview />
-
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <main>
+        <Outlet />
+      </main>
+    </div>
+  );
 }
+
 
 export default App
 

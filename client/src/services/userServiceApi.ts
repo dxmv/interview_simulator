@@ -1,5 +1,5 @@
 import { User } from "../types/user_types";
-import { storeToken } from "../auth/local_storage";
+import { getToken } from "../auth/local_storage";
 
 const API_URL = 'http://127.0.0.1:5000/api/user';
 
@@ -79,7 +79,11 @@ export const login = async (credentials: { email: string; password: string }): P
  * @returns user profile data
  */
 export const getProfile = async (): Promise<User> => {
-    const response = await fetch(`${API_URL}/profile`);
+    const response = await fetch(`${API_URL}/profile`, {
+        headers: {
+            'Authorization': `Bearer ${getToken()}`
+        }
+    });
     
     if (!response.ok) {
         const error = await response.json();
