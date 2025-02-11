@@ -42,14 +42,16 @@
 - [x] Router on front-end
 - [x] Protected routes
 - [ ] When reading the cv, gather the seniority of the user
-- [x] CV page
+- [ ] CV page
     - [x] Display the cv analysis
     - [x] Can change cv info on the front-end
-    - [ ] Can change cv by chaning the info
+    - [x] Can change cv by chaning the info
     - [ ] Can upload a new cv, and the old one is updated
 - [ ] Interview stats
-    - [ ] Stats page
-    - [ ] Display a graph with the interview history grades
+    - [x] Stats page
+    - [x] Average grade, lowest, highest, median
+    - [x] Display a graph with the interview history grades
+    - [ ] What should user do to improve his interview skills (taking the summary of all interviews)
 - [ ] Simulation & Training mode
     - [ ] Can select the type of interview
 

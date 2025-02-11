@@ -6,7 +6,7 @@ import Register from './components/register/Register';
 import Interview from './components/interview/Interview';
 import AuthWrapper from './auth/AuthWrapper';
 import CV_Page from './components/cv/CV_Page';
-
+import StatsPage from './components/stats/StatsPage';
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -31,6 +31,10 @@ export const router = createBrowserRouter([
       {
         path: '/cv',
         element: <CV_Page />
+      },
+      {
+        path: '/stats',
+        element: <StatsPage />
       }
     ]
   }
