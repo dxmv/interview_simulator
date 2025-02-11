@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { CVAnalysis } from "../../types/cv_types";
-import { getCvAnalysis } from "../../services/cvServiceApi";
-import EditableText from "../reusable/EditableText";
+import { getCvAnalysis, updateCvAnalysis } from "../../services/cvServiceApi";
+import PersonalInfoSection from "./PersonalInfoSection";
+import SkillsSection from "./SkillsSection";
+import WorkExperienceSection from "./WorkExperienceSection";
+import ProjectsSection from "./ProjectsSection";
 
 /**
  * Displays the cv information 
@@ -23,6 +26,12 @@ const CV_Page = () => {
         return <div>Loading...</div>;
     }
 
+
+    /**
+     * Updates the personal info of the cv
+     * @param field the field to update
+     * @param value the value to update the field to
+     */
     const handleUpdatePersonalInfo = (field: keyof typeof cvAnalysis.personal_info, value: string) => {
         if (!cvAnalysis) return;
         setCvAnalysis({
@@ -32,9 +41,14 @@ const CV_Page = () => {
                 [field]: value
             }
         });
-        // TODO: Add API call to save changes
     };
 
+    /**
+     * Updates the project of the cv
+     * @param index the index of the project to update
+     * @param field the field to update
+     * @param value the value to update the field to
+     */
     const handleUpdateProject = (index: number, field: keyof typeof cvAnalysis.projects[0], value: string) => {
         if (!cvAnalysis) return;
         const newProjects = [...cvAnalysis.projects];
@@ -46,9 +60,14 @@ const CV_Page = () => {
             ...cvAnalysis,
             projects: newProjects
         });
-        // TODO: Add API call to save changes
     };
 
+    /**
+     * Updates the work experience of the cv
+     * @param index the index of the work experience to update
+     * @param field the field to update
+     * @param value the value to update the field to
+     */
     const handleUpdateWorkExperience = (index: number, field: keyof typeof cvAnalysis.work_experience[0], value: string) => {
         if (!cvAnalysis) return;
         const newWorkExperience = [...cvAnalysis.work_experience];
@@ -60,9 +79,14 @@ const CV_Page = () => {
             ...cvAnalysis,
             work_experience: newWorkExperience
         });
-        // TODO: Add API call to save changes
     };
 
+    /**
+     * Updates the responsibility of the work experience
+     * @param workIndex the index of the work experience to update
+     * @param respIndex the index of the responsibility to update
+     * @param value the value to update the responsibility to
+     */
     const handleUpdateResponsibility = (workIndex: number, respIndex: number, value: string) => {
         if (!cvAnalysis) return;
         const newWorkExperience = [...cvAnalysis.work_experience];
@@ -76,110 +100,81 @@ const CV_Page = () => {
             ...cvAnalysis,
             work_experience: newWorkExperience
         });
-        // TODO: Add API call to save changes
     };
 
-    console.log(cvAnalysis);
+    /**
+     * Removes a skill from the cv
+     * @param skillToRemove the skill to remove
+     */
+    const handleRemoveSkill = (skillToRemove: string) => {
+        if (!cvAnalysis) return;
+        const newSkills = cvAnalysis.skills.technical.filter(
+            skill => skill !== skillToRemove
+        );
+        setCvAnalysis({
+            ...cvAnalysis,
+            skills: {
+                ...cvAnalysis.skills,
+                technical: newSkills
+            }
+        });
+    };
+
+    /**
+     * Adds a skill to the cv
+     */
+    const handleAddSkill = (newSkill: string) => {
+        if (!cvAnalysis || !newSkill.trim()) return;
+        const newSkills = [...cvAnalysis.skills.technical, newSkill.trim()];
+        setCvAnalysis({
+            ...cvAnalysis,
+            skills: {
+                ...cvAnalysis.skills,
+                technical: newSkills
+            }
+        });
+    };
+
+    /**
+     * Submits the update cv
+     */
+    const handleSubmitUpdateCV = async () => {
+        const updatedCV = await updateCvAnalysis(cvAnalysis);
+        setCvAnalysis(updatedCV);
+    }
 
     return (
         <div className="p-4">
-            {/* Personal Info */}
-            <section className="mb-6">
-                <h1 className="text-2xl font-bold mb-4">Personal Information</h1>
-                <EditableText
-                    value={cvAnalysis.personal_info.name}
-                    onSave={(value) => handleUpdatePersonalInfo('name', value)}
-                />
-            </section>
+            <PersonalInfoSection 
+                personalInfo={cvAnalysis.personal_info}
+                onUpdate={handleUpdatePersonalInfo}
+            />
 
-            {/* Technical Skills */}
-            <section className="mb-6">
-                <h2 className="text-xl font-bold mb-3">Technical Skills</h2>
-                <div className="flex flex-wrap gap-2">
-                    {cvAnalysis.skills.technical && cvAnalysis.skills.technical.map((skill, index) => (
-                        <span key={index} className="bg-gray-100 px-3 py-1 rounded">
-                            {skill}
-                        </span>
-                    ))}
-                </div>
-            </section>
+            <SkillsSection 
+                skills={cvAnalysis.skills.technical}
+                onRemove={handleRemoveSkill}
+                onAdd={handleAddSkill}
+            />
 
-            {/* Work Experience */}
-            <section className="mb-6">
-                <h2 className="text-xl font-bold mb-3">Work Experience</h2>
-                {cvAnalysis.work_experience.map((work, index) => (
-                    <div key={index} className="mb-4">
-                        <h3 className="font-semibold">
-                            <EditableText
-                                value={work.role}
-                                onSave={(value) => handleUpdateWorkExperience(index, 'role', value)}
-                            />
-                            {" at "}
-                            <EditableText
-                                value={work.company}
-                                onSave={(value) => handleUpdateWorkExperience(index, 'company', value)}
-                            />
-                        </h3>
-                        <p className="text-gray-600">
-                            <EditableText
-                                value={work.duration}
-                                onSave={(value) => handleUpdateWorkExperience(index, 'duration', value)}
-                            />
-                        </p>
-                        <ul className="list-disc ml-6 mt-2">
-                            {work.key_responsibilities.map((resp, respIndex) => (
-                                <li key={respIndex}>
-                                    <EditableText
-                                        value={resp}
-                                        onSave={(value) => handleUpdateResponsibility(index, respIndex, value)}
-                                        multiline
-                                    />
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                ))}
-            </section>
+            <WorkExperienceSection 
+                workExperience={cvAnalysis.work_experience}
+                onUpdateWork={handleUpdateWorkExperience}
+                onUpdateResponsibility={handleUpdateResponsibility}
+            />
 
-            {/* Education */}
-            <section className="mb-6">
-                <h2 className="text-xl font-bold mb-3">Education</h2>
-                {cvAnalysis.education && cvAnalysis.education.map((edu, index) => (
-                    <div key={index} className="mb-2">
-                        <h3 className="font-semibold">{edu.degree}</h3>
-                        <p>{edu.institution} {edu.year && `(${edu.year})`}</p>
-                    </div>
-                ))}
-            </section>
-
-            {/* Projects */}
-            <section className="mb-6">
-                <h2 className="text-xl font-bold mb-3">Projects</h2>
-                {cvAnalysis.projects && cvAnalysis.projects.map((project, index) => (
-                    <div key={index} className="mb-4">
-                        <h3 className="font-semibold">
-                            <EditableText
-                                value={project.name}
-                                onSave={(value) => handleUpdateProject(index, 'name', value)}
-                            />
-                        </h3>
-                        <EditableText
-                            value={project.description}
-                            onSave={(value) => handleUpdateProject(index, 'description', value)}
-                            multiline
-                            className="mb-2"
-                        />
-                    </div>
-                ))}
-            </section>
+            <ProjectsSection 
+                projects={cvAnalysis.projects}
+                onUpdate={handleUpdateProject}
+            />
 
             {/* Metadata */}
-            <section className="text-sm text-gray-500 mb-6">
+            <section className="text-sm text-gray-500">
                 <p>Last updated: {new Date(cvAnalysis.updated_at).toLocaleDateString()}</p>
             </section>
 
             {/* Update cv button */}
-            <button className="bg-blue-500 text-white px-4 py-2 rounded">Update CV</button>
+            <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={handleSubmitUpdateCV}>Update CV</button>
+            <button className="bg-red-500 text-white px-4 py-2 rounded ml-2">Upload New CV</button>
         </div>
     );
 }

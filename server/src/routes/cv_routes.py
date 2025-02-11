@@ -45,3 +45,18 @@ def get_cv_analysis():
         return jsonify({'error': str(e)}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@cv_blueprint.route('/update', methods=['POST'])
+@jwt_required
+def update_cv():
+    '''Update CV analysis for current user'''
+    try:
+        print("update cv")
+        cv_analysis = cv_service.update_cv_analysis(request.json)
+        return jsonify(cv_analysis), 200
+    except ValueError as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 500

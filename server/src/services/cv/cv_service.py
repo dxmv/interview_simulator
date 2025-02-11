@@ -102,3 +102,28 @@ Do not include any explanations or additional text, only return the valid JSON o
             raise ValueError('No CV found for user')
 
         return cv.to_dict()
+
+    def update_cv_analysis(self, cv_analysis: dict):
+        '''
+        Updates the CV analysis
+        '''
+        user_id = get_jwt_identity()
+        if not user_id:
+            raise ValueError('User not authenticated')
+
+        cv = CV.query.filter_by(user_id=user_id).first()
+        if not cv:
+            raise ValueError('No CV found for user')
+
+        try:
+            cv.personal_info = cv_analysis['personal_info']
+            cv.skills = cv_analysis['skills']
+            cv.education = cv_analysis['education']
+            cv.work_experience = cv_analysis['work_experience']
+            cv.projects = cv_analysis['projects']
+
+            db.session.commit()
+            return cv.to_dict()
+        except Exception as e:
+            db.session.rollback()
+            raise ValueError(f'Failed to update CV analysis: {str(e)}')
