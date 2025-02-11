@@ -6,7 +6,7 @@ interface InterviewStartProps {
 }
 
 export default function InterviewStart({ onStart }: InterviewStartProps) {
-    const [numQuestions, setNumQuestions] = useState<number>(5);
+    const [numQuestions, setNumQuestions] = useState<number>(2);
 
     return (
       <div className="bg-gray-100 p-4 rounded-md w-full h-screen flex flex-col items-center justify-center">

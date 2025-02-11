@@ -1,3 +1,5 @@
+import { getToken } from '../auth/local_storage';
+
 const API_URL = 'http://127.0.0.1:5000/api/cv/'
 
 /**
@@ -31,7 +33,8 @@ export const uploadCV = async (file: File, token: string) => {
  * Get the CV analysis
  * @returns the CV analysis
  */
-export const getCvAnalysis = async (token: string) => {
+export const getCvAnalysis = async () => {
+    const token = getToken() || "";
     const response = await fetch(`${API_URL}`, {
         method: 'GET',
         headers: {

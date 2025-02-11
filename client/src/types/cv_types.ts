@@ -1,7 +1,7 @@
 export interface CVAnalysis {
     personal_info: PersonalInfo,
     skills: {
-        technical: string[],
+        technical: any[],
     },
     education: Education[],
     work_experience: WorkExperience[],
@@ -30,5 +30,4 @@ export interface WorkExperience {
 export interface Project {
     name: string;
     description: string;
-    technologies: string[];
 }
