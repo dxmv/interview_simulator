@@ -13,10 +13,9 @@ def init_cv_routes():
 @jwt_required
 def save_cv():
     '''
-    Save a cv to the database
+    Save or update a CV in the database
     '''
     try:
-        print("s")
         if 'file' not in request.files:
             return jsonify({'error': 'No file part'}), 400
         
@@ -29,8 +28,10 @@ def save_cv():
         }), 200
         
     except ValueError as e:
+        print(e)
         return jsonify({'error': str(e)}), 400
     except Exception as e:
+        print(e)
         return jsonify({'error': str(e)}), 500
 
 @cv_blueprint.route('/', methods=['GET'])

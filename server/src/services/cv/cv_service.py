@@ -18,7 +18,10 @@ class CVService:
     "personal_info": {
         "name": string,
     },
-    "technical_skills": string[],
+    "skills":{
+        "technical": string[],
+        "soft": string[]
+    },
     "education": [{
         "degree": string,
         "institution": string,
@@ -41,7 +44,8 @@ Do not include any explanations or additional text, only return the valid JSON o
 
     def save_cv(self, file):
         '''
-        Analyzes the CV and saves it to the database (without saving the file)
+        Analyzes the CV and saves/updates it in the database
+        Returns the CV analysis
         '''
         if not file or file.filename == '':
             raise ValueError('No file selected')
@@ -51,32 +55,27 @@ Do not include any explanations or additional text, only return the valid JSON o
             raise ValueError('User not authenticated')
 
         # Process the file in memory
-        cv_text = extract_text_from_pdf(file)  # Uses the file object directly
+        cv_text = extract_text_from_pdf(file)
         cv_data = self.analyze_cv(cv_text)
 
-        # Database logic remains unchanged
-        existing_cv = CV.query.filter_by(user_id=user_id).first()
-        if existing_cv:
-            existing_cv.personal_info = cv_data['personal_info']
-            existing_cv.skills = {'technical': cv_data['technical_skills']}
-            existing_cv.education = cv_data['education']
-            existing_cv.work_experience = cv_data['work_experience']
-            existing_cv.projects = cv_data['projects']
-        else:
-            new_cv = CV(
-                user_id=user_id,
-                personal_info=cv_data['personal_info'],
-                skills={'technical': cv_data['technical_skills']},
-                education=cv_data['education'],
-                work_experience=cv_data['work_experience'],
-                projects=cv_data['projects']
-            )
-            db.session.add(new_cv)
+        # Get or create CV record
+        cv = CV.query.filter_by(user_id=user_id).first()
+        if not cv:
+            cv = CV(user_id=user_id)
+            db.session.add(cv)
+
+        # Update CV data
+        cv.personal_info = cv_data['personal_info']
+        cv.skills = cv_data['skills']
+        cv.education = cv_data['education']
+        cv.work_experience = cv_data['work_experience']
+        cv.projects = cv_data['projects']
 
         try:
             db.session.commit()
-            return "CV processed successfully"  # No filename needed
+            return cv.to_dict()
         except Exception as e:
+            print(f'Failed to save CV: {str(e)}')
             db.session.rollback()
             raise ValueError(f'Failed to save CV: {str(e)}')
 

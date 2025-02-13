@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { CVAnalysis } from "../../types/cv_types";
-import { getCvAnalysis, updateCvAnalysis } from "../../services/cvServiceApi";
+import { getCvAnalysis, updateCvAnalysis, uploadCV } from "../../services/cvServiceApi";
+import { getToken } from "../../auth/local_storage";
 import PersonalInfoSection from "./PersonalInfoSection";
 import SkillsSection from "./SkillsSection";
 import WorkExperienceSection from "./WorkExperienceSection";
@@ -143,6 +144,23 @@ const CV_Page = () => {
         setCvAnalysis(updatedCV);
     }
 
+    /**
+     * Handles uploading a new CV file
+     */
+    const handleUploadNewCV = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        try {
+            const token = getToken() || "";
+            const newAnalysis = await uploadCV(file, token);
+            setCvAnalysis(newAnalysis);
+        } catch (error) {
+            console.error('Error uploading CV:', error);
+            // You might want to add proper error handling here
+        }
+    };
+
     return (
         <div className="p-4">
             <PersonalInfoSection 
@@ -172,9 +190,24 @@ const CV_Page = () => {
                 <p>Last updated: {new Date(cvAnalysis.updated_at).toLocaleDateString()}</p>
             </section>
 
-            {/* Update cv button */}
-            <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={handleSubmitUpdateCV}>Update CV</button>
-            <button className="bg-red-500 text-white px-4 py-2 rounded ml-2">Upload New CV</button>
+            {/* Replace the Upload New CV button with this */}
+            <div className="flex gap-2">
+                <button 
+                    className="bg-blue-500 text-white px-4 py-2 rounded" 
+                    onClick={handleSubmitUpdateCV}
+                >
+                    Update CV
+                </button>
+                <label className="bg-red-500 text-white px-4 py-2 rounded cursor-pointer">
+                    Upload New CV
+                    <input
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        onChange={handleUploadNewCV}
+                        className="hidden"
+                    />
+                </label>
+            </div>
         </div>
     );
 }

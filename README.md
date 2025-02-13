@@ -29,6 +29,7 @@
     - [ ] AuthContext slows the app down?
     - [ ] Technologies used for projects in cv
     - [ ] When user enters the site and is still logged in, extend the jwt token (generate a new one, that lasts longer)
+    - [ ] Projects are registered as work experience too
 ---
 ## Next steps
 
@@ -42,18 +43,19 @@
 - [x] Router on front-end
 - [x] Protected routes
 - [ ] When reading the cv, gather the seniority of the user
-- [ ] CV page
+- [x] CV page
     - [x] Display the cv analysis
     - [x] Can change cv info on the front-end
     - [x] Can change cv by chaning the info
-    - [ ] Can upload a new cv, and the old one is updated
+    - [x] Can upload a new cv, and the old one is updated
 - [ ] Interview stats
     - [x] Stats page
     - [x] Average grade, lowest, highest, median
     - [x] Display a graph with the interview history grades
     - [ ] What should user do to improve his interview skills (taking the summary of all interviews)
 - [ ] Simulation & Training mode
-    - [ ] Can select the type of interview
+    - [ ] Can select the type of interview 
+    - [ ] Different prompts for different types of interviews
 
 - [ ] Voice mode for the interview
     - [ ] Visual feedback for voice waves
