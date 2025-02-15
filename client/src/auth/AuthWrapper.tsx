@@ -7,16 +7,22 @@ interface AuthWrapperProps {
 }
 
 const AuthWrapper = ({ children }: AuthWrapperProps) => {
+  const { isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/');
+    if (!loading && !isAuthenticated) {
+      navigate('/login');
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, loading, navigate]);
 
-  return <>{children}</>;
+  // Show nothing while checking authentication
+  if (loading) {
+    return null; // Or a loading spinner if you prefer
+  }
+
+  // Only render children if authenticated
+  return isAuthenticated ? <>{children}</> : null;
 };
 
 export default AuthWrapper;

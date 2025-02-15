@@ -49,8 +49,8 @@ const InterviewChat = ({ questions }: { questions: string[] }) => {
             // Speak the AI's response
             handleSpeech(data.response);
 
-            // Only add next question if it exists
-            if (data.next_question !== null) {
+            // Only add next question if it exists and is not null
+            if (data.next_question && typeof data.next_question === 'string') {
                 setMessages(prev => [...prev, {
                     id: Date.now().toString() + '_next',
                     content: data.next_question,
@@ -58,7 +58,7 @@ const InterviewChat = ({ questions }: { questions: string[] }) => {
                     timestamp: new Date()
                 }]);
                 // Speak the next question after a short delay
-                setTimeout(() => handleSpeech(data.next_question!), 1000);
+                setTimeout(() => handleSpeech(data.next_question), 1000);
             }
         };
 

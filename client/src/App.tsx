@@ -1,12 +1,9 @@
 import { Outlet } from 'react-router-dom';
-
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <main>
+      <div className="min-h-screen bg-gray-50">
         <Outlet />
-      </main>
-    </div>
+      </div>
   );
 }
 

@@ -6,6 +6,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 # Initialize SQLAlchemy instance
 db = SQLAlchemy()
 
+# User model
 class User(db.Model):
     __tablename__ = 'users'
     
@@ -33,6 +34,7 @@ class User(db.Model):
     def get_token(self):
         return create_access_token(identity=str(self.id))
 
+# CV model
 class CV(db.Model):
     __tablename__ = 'cvs'
     
@@ -46,7 +48,7 @@ class CV(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    # Relationship with User
+    # Relationship with User (one to one)
     user = db.relationship('User', backref=db.backref('cv', uselist=False))
 
     def __repr__(self):
@@ -77,7 +79,7 @@ class Interview(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    # Relationship with User
+    # Relationship with User (one to many)
     user = db.relationship('User', backref=db.backref('interviews', lazy=True))
 
     def __repr__(self):

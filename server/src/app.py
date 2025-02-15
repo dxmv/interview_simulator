@@ -12,10 +12,11 @@ from routes.cv_routes import cv_blueprint, init_cv_routes
 from routes.interview_routes import interview_blueprint, init_interview_routes
 from routes.user_routes import user_blueprint, init_user_routes
 
-# Load environment variables from .env file
-load_dotenv()
+
 
 if __name__ == "__main__":
+    # Load environment variables from .env file
+    load_dotenv()
     # Initialize Flask app
     app = Flask(__name__)
 

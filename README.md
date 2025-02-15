@@ -21,6 +21,7 @@
 - [ ] Bugs
     - [ ] When deleting an interview, the page is not refreshed
     - [ ] When inapropriate message is sent, we wait for the evaluation to be done before sending the next message
+    - [ ] When the interview is over, we wait for all messages to be evaluated before showing the results
     - [ ] Only saves the first few messages
     - [ ] Routes & ux
     - [ ] Generate questions based on the cv again
@@ -30,6 +31,8 @@
     - [ ] Technologies used for projects in cv
     - [ ] When user enters the site and is still logged in, extend the jwt token (generate a new one, that lasts longer)
     - [ ] Projects are registered as work experience too
+    - [ ] Hash passwords
+    - [ ] Navigate after registration & login
 ---
 ## Next steps
 
@@ -42,17 +45,15 @@
     - [x] Save interviews for user
 - [x] Router on front-end
 - [x] Protected routes
-- [ ] When reading the cv, gather the seniority of the user
 - [x] CV page
     - [x] Display the cv analysis
     - [x] Can change cv info on the front-end
     - [x] Can change cv by chaning the info
     - [x] Can upload a new cv, and the old one is updated
-- [ ] Interview stats
+- [x] Interview stats
     - [x] Stats page
     - [x] Average grade, lowest, highest, median
     - [x] Display a graph with the interview history grades
-    - [ ] What should user do to improve his interview skills (taking the summary of all interviews)
 - [ ] Simulation & Training mode
     - [ ] Can select the type of interview 
     - [ ] Different prompts for different types of interviews
@@ -61,6 +62,7 @@
     - [ ] Visual feedback for voice waves
 - [ ] Better voice for ai
 - [ ] Better ui & ux
+    - [ ] Use shadcn/ui
 - [ ] Dark & light mode
 - [ ] Loading messages for all requests
 - [ ] Loading page
@@ -69,5 +71,6 @@
     - [ ] AI coach based on the interview history
     - [ ] AI coach based on the cv
 - [ ] Responsive design
+- [ ] Cleaner code
 - [ ] Deployment
 

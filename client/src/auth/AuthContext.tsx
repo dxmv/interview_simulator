@@ -5,37 +5,43 @@ import { getProfile } from '../services/userServiceApi';
 interface AuthContextType {
   isAuthenticated: boolean;
   setIsAuthenticated: (value: boolean) => void;
-  checkAuth: () => void;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false); // Whether the user is authenticated
+  const [loading, setLoading] = useState<boolean>(true); // Whether the authentication is loading
 
-  const checkAuth = async () => {
-    const token = getToken();
+  useEffect(() => {
+    /**
+     * Validates the token and sets the isAuthenticated state
+     */
+    const validateToken = async () => {
+      const token = getToken();
+      
+      if (!token) {
+        setIsAuthenticated(false);
+        setLoading(false);
+        return;
+      }
 
-    if (token) {
-      // try to get user (check if token is valid)
       try {
-        const user = await getProfile();
-        console.log(user);
+        await getProfile(); // Validates token by making a request
         setIsAuthenticated(true);
       } catch (error) {
         setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
       }
-    } else {
-      setIsAuthenticated(false);
-    }
-  };
+    };
 
-  useEffect(() => {
-    checkAuth();
+    validateToken();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, checkAuth }}>
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, loading }}>
       {children}
     </AuthContext.Provider>
   );
