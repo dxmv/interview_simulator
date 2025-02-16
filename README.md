@@ -23,7 +23,7 @@
     - [ ] When inapropriate message is sent, we wait for the evaluation to be done before sending the next message
     - [ ] When the interview is over, we wait for all messages to be evaluated before showing the results
     - [ ] Only saves the first few messages
-    - [ ] Routes & ux
+    - [x] Routes 
     - [ ] Generate questions based on the cv again
     - [ ] Error if llama isn't started
     - [ ] Can multiple users use it at the same time?
@@ -62,8 +62,8 @@
     - [ ] Visual feedback for voice waves
 - [ ] Better voice for ai
 - [ ] Better ui & ux
-    - [ ] Use shadcn/ui
-- [ ] Dark & light mode
+    - [x] Use shadcn/ui
+- [x] Dark & light mode
 - [ ] Loading messages for all requests
 - [ ] Loading page
 - [ ] Error page
