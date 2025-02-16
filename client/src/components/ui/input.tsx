@@ -1,6 +1,7 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { Label } from "@radix-ui/react-label"
 
 interface InputProps extends React.ComponentProps<"input"> {
   label?: string
@@ -11,12 +12,7 @@ function Input({ className, type, label, icon, ...props }: InputProps) {
   return (
     <div className="grid w-full gap-2">
       {label && (
-        <label
-          htmlFor={props.id}
-          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-        >
-          {label}
-        </label>
+        <Label htmlFor={props.id}>{label}</Label>
       )}
       <div className="relative">
         {icon && (

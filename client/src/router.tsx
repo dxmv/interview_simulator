@@ -7,6 +7,7 @@ import Interview from './components/interview/Interview';
 import CV_Page from './components/cv/CV_Page';
 import StatsPage from './components/stats/StatsPage';
 import AuthWrapper from './auth/AuthWrapper';
+import ProtectedLayout from './auth/ProtectedLayout';
 
 export const router = createBrowserRouter([
   {
@@ -22,38 +23,31 @@ export const router = createBrowserRouter([
         path: '/register',
         element: <Register />
       },
-      // Protected routes
+      // Protected routes group
       {
-        path: '/',
         element: (
           <AuthWrapper>
-            <Home />
+            <ProtectedLayout />
           </AuthWrapper>
-        )
-      },
-      {
-        path: '/interview',
-        element: (
-          <AuthWrapper>
-            <Interview />
-          </AuthWrapper>
-        )
-      },
-      {
-        path: '/cv',
-        element: (
-          <AuthWrapper>
-            <CV_Page />
-          </AuthWrapper>
-        )
-      },
-      {
-        path: '/stats',
-        element: (
-          <AuthWrapper>
-            <StatsPage />
-          </AuthWrapper>
-        )
+        ),
+        children: [
+          {
+            path: '/',
+            element: <Home />
+          },
+          {
+            path: '/interview',
+            element: <Interview />
+          },
+          {
+            path: '/cv',
+            element: <CV_Page />
+          },
+          {
+            path: '/stats',
+            element: <StatsPage />
+          }
+        ]
       }
     ]
   }

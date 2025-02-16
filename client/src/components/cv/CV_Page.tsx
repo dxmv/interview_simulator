@@ -6,6 +6,7 @@ import PersonalInfoSection from "./PersonalInfoSection";
 import SkillsSection from "./SkillsSection";
 import WorkExperienceSection from "./WorkExperienceSection";
 import ProjectsSection from "./ProjectsSection";
+import SideNav from "../navigation/SideNav";
 
 /**
  * Displays the cv information 
