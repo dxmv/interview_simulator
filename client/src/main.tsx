@@ -5,12 +5,15 @@ import './main.css'
 import { router } from './router'
 import { AuthProvider } from './context/auth/AuthContext'
 import { TokenProvider } from './context/auth/TokenContext'
+import { CVProvider } from './context/cv/CVContext'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
       <TokenProvider>
-        <RouterProvider router={router} />
+        <CVProvider>
+          <RouterProvider router={router} />
+        </CVProvider>
       </TokenProvider>
     </AuthProvider>
   </StrictMode>,

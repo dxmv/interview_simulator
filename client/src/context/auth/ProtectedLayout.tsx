@@ -1,10 +1,11 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import SideNav from '../../components/navigation/SideNav';
 
 const ProtectedLayout = () => {
+  const location = useLocation();
   return (
     <div className="flex">
-      <SideNav />
+      {location.pathname !== '/cv-upload' && <SideNav />}
       <main className="flex-1 ml-[72px]">
         <Outlet />
       </main>

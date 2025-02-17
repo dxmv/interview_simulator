@@ -2,14 +2,14 @@ import { FC, useState } from 'react'
 import { PrimaryButton } from '../reusable/PrimaryButton'
 import { UploadDocument } from './UploadDocument';
 import { uploadCV } from '../../services/cvServiceApi';
-import { getToken } from '../../context/auth/local_storage';
+import { useToken } from '../../context/auth/TokenContext';
 interface CVuploadProps {
   onUpload: (file: File) => void
 }
 
 export const CVupload: FC<CVuploadProps> = () => {
     const [file, setFile] = useState<File | null>(null);
-
+    const { getToken } = useToken();
     const handleUpload = async () => {
         if (file) {
             try {

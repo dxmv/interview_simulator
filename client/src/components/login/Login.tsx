@@ -5,7 +5,7 @@ import { Input } from '../ui/input';
 import { useForm } from '../../hooks/useForm';
 import { Mail, Lock } from 'lucide-react';
 import { Link as RouterLink } from 'react-router-dom';
-
+import { useCV } from '../../context/cv/CVContext';
 interface LoginFormData {
     email: string;
     password: string;
@@ -13,6 +13,7 @@ interface LoginFormData {
 
 const Login = () => {
     const { login: loginWithToken } = useToken();
+    const { hasUploadedCV } = useCV();
     const { formData, error, handleChange, handleSubmit } = useForm<LoginFormData>({
         initialState: {
             email: '',
@@ -20,9 +21,10 @@ const Login = () => {
         },
         onSubmit: async (data) => {
             const response = await login(data);
+            console.log(response)
             loginWithToken(response.token);
         },
-        navigateTo: '/'
+        navigateTo: hasUploadedCV ? '/' : '/cv-upload'
     });
 
     return (

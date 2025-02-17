@@ -8,6 +8,7 @@ import CV_Page from './components/cv/CV_Page';
 import StatsPage from './components/stats/StatsPage';
 import AuthWrapper from './context/auth/AuthWrapper';
 import ProtectedLayout from './context/auth/ProtectedLayout';
+import { CVupload } from './components/cv-upload/CVupload';
 
 export const router = createBrowserRouter([
   {
@@ -46,6 +47,10 @@ export const router = createBrowserRouter([
           {
             path: '/stats',
             element: <StatsPage />
+          },
+          {
+            path: '/cv-upload',
+            element: <CVupload />
           }
         ]
       }

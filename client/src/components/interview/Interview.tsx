@@ -2,11 +2,12 @@ import { useState } from "react";
 import InterviewStart from "./InterviewStart";
 import InterviewChat from "./InterviewChat";
 import { SocketService } from "../../services/socketService";
-
+import { useCV } from "../../context/cv/CVContext";
 const Interview = () => {
     const [step, setStep] = useState<number>(1);
     const [questions, setQuestions] = useState<string[]>([]);
     const socketService = SocketService.getInstance();
+    const { hasUploadedCV } = useCV();
 
     const handleStartInterview = async (numQuestions: number) => {
         try {
@@ -19,6 +20,10 @@ const Interview = () => {
             console.error('Failed to start interview:', error);
         }
     };
+
+    if (!hasUploadedCV) {
+        return <div>Please upload a CV first</div>;
+    }
 
     return (
         <div>

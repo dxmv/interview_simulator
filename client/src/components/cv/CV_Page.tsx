@@ -5,7 +5,8 @@ import PersonalInfoSection from "./PersonalInfoSection";
 import SkillsSection from "./SkillsSection";
 import WorkExperienceSection from "./WorkExperienceSection";
 import ProjectsSection from "./ProjectsSection";
-import SideNav from "../navigation/SideNav";
+import { useToken } from "../../context/auth/TokenContext";
+import { useCV } from "../../context/cv/CVContext";
 
 const TOKEN_KEY = 'token';
 
@@ -16,17 +17,24 @@ const TOKEN_KEY = 'token';
  */
 const CV_Page = () => {
     const [cvAnalysis, setCvAnalysis] = useState<CVAnalysis | null>(null);
+    const { getToken } = useToken();
+    const { setHasUploadedCV } = useCV();
 
     useEffect(() => {
         const fetchCVAnalysis = async () => {
-            const analysis = await getCvAnalysis();
-            setCvAnalysis(analysis);
+            try {
+                const analysis = await getCvAnalysis();
+                setCvAnalysis(analysis);
+                setHasUploadedCV(!!analysis);
+            } catch (error) {
+                setHasUploadedCV(false);
+            }
         }
         fetchCVAnalysis();
-    }, []);
+    }, [setHasUploadedCV]);
     
     if (!cvAnalysis) {
-        return <div>Loading...</div>;
+        return <div>CV not found</div>;
     }
 
 
@@ -154,11 +162,13 @@ const CV_Page = () => {
         if (!file) return;
 
         try {
-            const token = localStorage.getItem(TOKEN_KEY) || "";
+            const token = getToken() || "";
             const newAnalysis = await uploadCV(file, token);
             setCvAnalysis(newAnalysis);
+            setHasUploadedCV(true);
         } catch (error) {
             console.error('Error uploading CV:', error);
+            setHasUploadedCV(false);
         }
     };
 
