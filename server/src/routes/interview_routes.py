@@ -122,7 +122,9 @@ def delete_interview(id: int):
     try:
         deleted = interview_service.delete_interview(id)
         if deleted:
-            return jsonify({'message': 'Interview deleted successfully'})
+            print("Deleted interview")
+            interviews = interview_service.get_interviews()
+            return jsonify(interviews)
         else:
             return jsonify({'error': 'Failed to delete interview'}), 500
     except Exception as e:

@@ -19,7 +19,7 @@
 - [x] Can look at previous interviews
 - [x] Can delete previous interviews
 - [ ] Bugs
-    - [ ] When deleting an interview, the page is not refreshed
+    - [x] When deleting an interview, the page is not refreshed
     - [ ] When inapropriate message is sent, we wait for the evaluation to be done before sending the next message
     - [ ] When the interview is over, we wait for all messages to be evaluated before showing the results
     - [ ] Only saves the first few messages
@@ -29,10 +29,11 @@
     - [ ] Can multiple users use it at the same time?
     - [ ] AuthContext slows the app down?
     - [ ] Technologies used for projects in cv
-    - [ ] When user enters the site and is still logged in, extend the jwt token (generate a new one, that lasts longer)
+    - [ ] When user enters the site and is still logged in, extend the jwt token (generate a new one, that lasts longer, basically login again, idk if this is possible)
     - [ ] Projects are registered as work experience too
     - [ ] Hash passwords
     - [ ] Navigate after registration & login
+    - [ ] The user can start the interview without uploading a cv
 ---
 ## Next steps
 
@@ -54,6 +55,15 @@
     - [x] Stats page
     - [x] Average grade, lowest, highest, median
     - [x] Display a graph with the interview history grades
+- [x] Add jwt token context 
+- [ ] CV uploaded to the auth context
+- [ ] Settings page
+    - [ ] Change email
+    - [ ] Change password
+    - [ ] Change theme
+    - [ ] Change voice
+    - [ ] Delete account
+    - [ ] Logout
 - [ ] Simulation & Training mode
     - [ ] Can select the type of interview 
     - [ ] Different prompts for different types of interviews
@@ -63,14 +73,22 @@
 - [ ] Better voice for ai
 - [ ] Better ui & ux
     - [x] Use shadcn/ui
-- [x] Dark & light mode
-- [ ] Loading messages for all requests
+- [ ] Dark & light mode
+- [ ] Messages when uploading cv
+- [ ] Messages when generating questions
+- [ ] Messages when evaluating answers
+- [ ] Notifications
 - [ ] Loading page
 - [ ] Error page
-- [ ] AI coach
-    - [ ] AI coach based on the interview history
-    - [ ] AI coach based on the cv
 - [ ] Responsive design
 - [ ] Cleaner code
 - [ ] Deployment
+
+## More features
+- [ ] AI coach
+    - [ ] AI coach based on the interview history
+    - [ ] AI coach based on the cv
+- [ ] Send email
+- [ ] More natural voices for the ai
+
 

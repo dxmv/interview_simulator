@@ -1,7 +1,7 @@
 import { User } from "../types/user_types";
-import { getToken } from "../auth/local_storage";
 
 const API_URL = 'http://127.0.0.1:5000/api/user';
+const TOKEN_KEY = 'token';
 
 interface RegisterData {
     email: string;
@@ -79,9 +79,10 @@ export const login = async (credentials: { email: string; password: string }): P
  * @returns user profile data
  */
 export const getProfile = async (): Promise<User> => {
+    const token = localStorage.getItem(TOKEN_KEY);
     const response = await fetch(`${API_URL}/profile`, {
         headers: {
-            'Authorization': `Bearer ${getToken()}`
+            'Authorization': `Bearer ${token}`
         }
     });
     

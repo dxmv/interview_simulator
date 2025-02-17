@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { getToken } from './local_storage';
-import { getProfile } from '../services/userServiceApi';
+import { getProfile } from '../../services/userServiceApi';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -9,6 +8,8 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
+
+const TOKEN_KEY = 'token';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false); // Whether the user is authenticated
@@ -19,7 +20,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
      * Validates the token and sets the isAuthenticated state
      */
     const validateToken = async () => {
-      const token = getToken();
+      const token = localStorage.getItem(TOKEN_KEY);
       
       if (!token) {
         setIsAuthenticated(false);

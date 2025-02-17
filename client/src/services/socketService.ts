@@ -1,16 +1,17 @@
 import { io, Socket } from 'socket.io-client';
 import { AnswerEvaluation } from '../types/interview';
 import { Message as ChatMessage } from '../types/chat_types';
-import { getToken } from '../auth/local_storage';
+
+const TOKEN_KEY = 'token';
+
 export class SocketService {
     private socket: typeof Socket;
     private static instance: SocketService;
     private token: string;
 
     private constructor() {
-        this.token = getToken() || '';
+        this.token = localStorage.getItem(TOKEN_KEY) || '';
         this.socket = io('http://127.0.0.1:5000',{auth: {token: `Bearer ${this.token}`}});
-
 
         // Basic connection logging
         this.socket.on('connected', () => console.log('Connected to server'));
@@ -54,7 +55,6 @@ export class SocketService {
     public onInterviewEnded(callback: (data: { response: string }) => void) {
         this.socket.on('interview_ended', callback);
     }
-
 
     public disconnect() {
         this.socket.disconnect();

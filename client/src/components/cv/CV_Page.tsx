@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { CVAnalysis } from "../../types/cv_types";
 import { getCvAnalysis, updateCvAnalysis, uploadCV } from "../../services/cvServiceApi";
-import { getToken } from "../../auth/local_storage";
 import PersonalInfoSection from "./PersonalInfoSection";
 import SkillsSection from "./SkillsSection";
 import WorkExperienceSection from "./WorkExperienceSection";
 import ProjectsSection from "./ProjectsSection";
 import SideNav from "../navigation/SideNav";
+
+const TOKEN_KEY = 'token';
 
 /**
  * Displays the cv information 
@@ -153,12 +154,11 @@ const CV_Page = () => {
         if (!file) return;
 
         try {
-            const token = getToken() || "";
+            const token = localStorage.getItem(TOKEN_KEY) || "";
             const newAnalysis = await uploadCV(file, token);
             setCvAnalysis(newAnalysis);
         } catch (error) {
             console.error('Error uploading CV:', error);
-            // You might want to add proper error handling here
         }
     };
 

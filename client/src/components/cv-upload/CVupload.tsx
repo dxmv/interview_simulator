@@ -2,7 +2,7 @@ import { FC, useState } from 'react'
 import { PrimaryButton } from '../reusable/PrimaryButton'
 import { UploadDocument } from './UploadDocument';
 import { uploadCV } from '../../services/cvServiceApi';
-import { getToken } from '../../auth/local_storage';
+import { getToken } from '../../context/auth/local_storage';
 interface CVuploadProps {
   onUpload: (file: File) => void
 }

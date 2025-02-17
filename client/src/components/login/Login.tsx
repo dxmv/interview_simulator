@@ -1,5 +1,5 @@
 import { login } from '../../services/userServiceApi';
-import { storeToken } from '../../auth/local_storage';
+import { useToken } from '../../context/auth/TokenContext';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { useForm } from '../../hooks/useForm';
@@ -12,6 +12,7 @@ interface LoginFormData {
 }
 
 const Login = () => {
+    const { login: loginWithToken } = useToken();
     const { formData, error, handleChange, handleSubmit } = useForm<LoginFormData>({
         initialState: {
             email: '',
@@ -19,7 +20,7 @@ const Login = () => {
         },
         onSubmit: async (data) => {
             const response = await login(data);
-            storeToken(response.token);
+            loginWithToken(response.token);
         },
         navigateTo: '/'
     });

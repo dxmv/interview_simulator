@@ -30,7 +30,7 @@ export const getInterviews = async (token: string): Promise<SavedInterview[]> =>
  * @param token - JWT token for authentication
  * @returns true if the interview was deleted, false otherwise
  */
-export const deleteInterview = async (id: number, token: string): Promise<boolean> => {
+export const deleteInterview = async (id: number, token: string): Promise<SavedInterview[]> => {
     const response = await fetch(`${API_URL}/${id}`, {
         method: 'DELETE',
         headers: {
@@ -44,7 +44,7 @@ export const deleteInterview = async (id: number, token: string): Promise<boolea
         throw new Error(error.error || 'Failed to delete interview');
     }
 
-    return true;
+    return response.json();
 };
 
 // /**

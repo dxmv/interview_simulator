@@ -1,7 +1,7 @@
-import { getToken } from '../auth/local_storage';
 import { CVAnalysis } from '../types/cv_types';
 
-const API_URL = 'http://127.0.0.1:5000/api/cv/'
+const API_URL = 'http://127.0.0.1:5000/api/cv/';
+const TOKEN_KEY = 'token';
 
 /**
  * Upload a CV file
@@ -17,9 +17,7 @@ export const uploadCV = async (file: File, token: string) => {
         body: formData,
         headers: {
             'Authorization': `Bearer ${token}`
-        },
-        // Don't set Content-Type header - let the browser set it automatically
-        // for multipart/form-data with the correct boundary
+        }
     })
     
     if (!response.ok) {
@@ -35,7 +33,7 @@ export const uploadCV = async (file: File, token: string) => {
  * @returns the CV analysis
  */
 export const getCvAnalysis = async () => {
-    const token = getToken() || "";
+    const token = localStorage.getItem(TOKEN_KEY);
     const response = await fetch(`${API_URL}`, {
         method: 'GET',
         headers: {
@@ -57,7 +55,7 @@ export const getCvAnalysis = async () => {
  * @returns the CV analysis
  */
 export const updateCvAnalysis = async (cvAnalysis: CVAnalysis) => {
-    const token = getToken() || "";
+    const token = localStorage.getItem(TOKEN_KEY);
     const response = await fetch(`${API_URL}update`, {
         method: 'POST',
         headers: {

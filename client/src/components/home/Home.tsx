@@ -2,17 +2,19 @@ import { useState, useEffect } from "react";
 import { SavedInterview as SavedInterviewType } from "../../types/interview";
 import { getInterviews } from "../../services/interviewServiceApi";
 import SavedInterview from "./SavedInterview";
-import { getToken } from "../../auth/local_storage";
 import { useNavigate } from "react-router-dom";
 import { Separator } from "../ui/separator";
+
+const TOKEN_KEY = 'token';
+
 const Home = () => {
     const navigate = useNavigate();
     const [interviews, setInterviews] = useState<SavedInterviewType[]>([]);
 
     useEffect(() => {
         const fetchInterviews = async () => {
-            const interviews = await getInterviews(getToken() || "");
-            console.log(interviews);
+            const token = localStorage.getItem(TOKEN_KEY) || "";
+            const interviews = await getInterviews(token);
             setInterviews(interviews);
         }
         fetchInterviews();
@@ -25,7 +27,7 @@ const Home = () => {
                 <Separator className="w-full"/>
                 <div className="grid gap-4">
                     {interviews.map(interview => (
-                        <SavedInterview key={interview.id} interview={interview} />
+                        <SavedInterview key={interview.id} interview={interview} setInterviews={setInterviews}/>
                     ))}
                 </div>
             </div>

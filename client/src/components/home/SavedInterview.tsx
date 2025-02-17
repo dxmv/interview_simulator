@@ -4,16 +4,17 @@ import { format } from "date-fns";
 import { useState } from "react";
 import InterviewModal from "../interview/InterviewModal";
 import { deleteInterview } from "../../services/interviewServiceApi";
-import { getToken } from "../../auth/local_storage";
 
-const SavedInterview = ({ interview }: { interview: SavedInterviewType }) => {
+const TOKEN_KEY = 'token';
+
+const SavedInterview = ({ interview, setInterviews }: { interview: SavedInterviewType, setInterviews: (interviews: SavedInterviewType[]) => void }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleDelete = async () => {
         try {
-            await deleteInterview(interview.id, getToken() || "");
-            // Trigger refresh of parent component
-            window.location.reload();
+            const token = localStorage.getItem(TOKEN_KEY) || "";
+            const response = await deleteInterview(interview.id, token);
+            setInterviews(response);
         } catch (error) {
             console.error('Error deleting interview:', error);
         }

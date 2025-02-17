@@ -92,7 +92,7 @@ const Register = () => {
                         icon={<KeyRound className="h-4 w-4 text-gray-500" />}
                     />
                     {/* Submit button for the form */}
-                    <Button type="submit" className="w-full mt-4">Get Started</Button>
+                    <Button type="submit" className="w-full mt-4">Next</Button>
                 </form>
                 <div className="text-center mt-4 mb-4">
                     <div className="flex items-center justify-center">
