@@ -33,7 +33,7 @@
     - [ ] Projects are registered as work experience too
     - [ ] Hash passwords
     - [ ] Navigate after registration & login
-    - [ ] The user can start the interview without uploading a cv
+    - [x] The user can start the interview without uploading a cv
 ---
 ## Next steps
 
@@ -55,8 +55,8 @@
     - [x] Stats page
     - [x] Average grade, lowest, highest, median
     - [x] Display a graph with the interview history grades
-- [x] Add jwt token context 
-- [ ] CV uploaded to the auth context
+- [x] JWT token context 
+- [x] CV uploaded context
 - [ ] Settings page
     - [ ] Change email
     - [ ] Change password
