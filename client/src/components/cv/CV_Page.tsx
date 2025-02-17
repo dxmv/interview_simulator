@@ -1,14 +1,12 @@
 import { useState, useEffect } from "react";
 import { CVAnalysis } from "../../types/cv_types";
-import { getCvAnalysis, updateCvAnalysis, uploadCV } from "../../services/cvServiceApi";
+import { getCvAnalysis, updateCvAnalysis } from "../../services/cvServiceApi";
 import PersonalInfoSection from "./PersonalInfoSection";
 import SkillsSection from "./SkillsSection";
 import WorkExperienceSection from "./WorkExperienceSection";
 import ProjectsSection from "./ProjectsSection";
-import { useToken } from "../../context/auth/TokenContext";
 import { useCV } from "../../context/cv/CVContext";
-
-const TOKEN_KEY = 'token';
+import { CVupload } from "../cv-upload/CVupload";
 
 /**
  * Displays the cv information 
@@ -17,26 +15,36 @@ const TOKEN_KEY = 'token';
  */
 const CV_Page = () => {
     const [cvAnalysis, setCvAnalysis] = useState<CVAnalysis | null>(null);
-    const { getToken } = useToken();
-    const { setHasUploadedCV } = useCV();
+    const { hasUploadedCV, setHasUploadedCV } = useCV();
 
     useEffect(() => {
         const fetchCVAnalysis = async () => {
             try {
+                if (!hasUploadedCV) {
+                    return;
+                }
                 const analysis = await getCvAnalysis();
                 setCvAnalysis(analysis);
                 setHasUploadedCV(!!analysis);
             } catch (error) {
+                console.error('Error fetching CV:', error);
                 setHasUploadedCV(false);
             }
         }
         fetchCVAnalysis();
-    }, [setHasUploadedCV]);
+    }, [hasUploadedCV, setHasUploadedCV]);
     
-    if (!cvAnalysis) {
-        return <div>CV not found</div>;
+    if (!hasUploadedCV || !cvAnalysis) {
+        return (
+            <CVupload 
+                onUpload={(newAnalysis) => {
+                    setHasUploadedCV(true);
+                    setCvAnalysis(newAnalysis);
+                }} 
+                
+            />
+        );
     }
-
 
     /**
      * Updates the personal info of the cv
@@ -150,27 +158,13 @@ const CV_Page = () => {
      * Submits the update cv
      */
     const handleSubmitUpdateCV = async () => {
-        const updatedCV = await updateCvAnalysis(cvAnalysis);
-        setCvAnalysis(updatedCV);
-    }
-
-    /**
-     * Handles uploading a new CV file
-     */
-    const handleUploadNewCV = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (!file) return;
-
         try {
-            const token = getToken() || "";
-            const newAnalysis = await uploadCV(file, token);
-            setCvAnalysis(newAnalysis);
-            setHasUploadedCV(true);
+            const updatedCV = await updateCvAnalysis(cvAnalysis);
+            setCvAnalysis(updatedCV);
         } catch (error) {
-            console.error('Error uploading CV:', error);
-            setHasUploadedCV(false);
+            console.error('Error updating CV:', error);
         }
-    };
+    }
 
     return (
         <div className="p-4">
@@ -201,23 +195,21 @@ const CV_Page = () => {
                 <p>Last updated: {new Date(cvAnalysis.updated_at).toLocaleDateString()}</p>
             </section>
 
-            {/* Replace the Upload New CV button with this */}
-            <div className="flex gap-2">
+            {/* Actions */}
+            <div className="flex gap-2 mt-4">
                 <button 
                     className="bg-blue-500 text-white px-4 py-2 rounded" 
                     onClick={handleSubmitUpdateCV}
                 >
                     Update CV
                 </button>
-                <label className="bg-red-500 text-white px-4 py-2 rounded cursor-pointer">
-                    Upload New CV
-                    <input
-                        type="file"
-                        accept=".pdf,.doc,.docx"
-                        onChange={handleUploadNewCV}
-                        className="hidden"
-                    />
-                </label>
+                <CVupload 
+                    onUpload={(newAnalysis) => {
+                        setHasUploadedCV(true);
+                        setCvAnalysis(newAnalysis);
+                    }}
+                    isInline
+                />
             </div>
         </div>
     );

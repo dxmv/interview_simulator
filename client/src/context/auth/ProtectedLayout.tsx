@@ -6,7 +6,7 @@ const ProtectedLayout = () => {
   return (
     <div className="flex">
       {location.pathname !== '/cv-upload' && <SideNav />}
-      <main className="flex-1 ml-[72px]">
+      <main className={`flex-1 ${location.pathname === '/cv-upload' ? 'ml-0' : 'ml-[72px]'}`}>
         <Outlet />
       </main>
     </div>

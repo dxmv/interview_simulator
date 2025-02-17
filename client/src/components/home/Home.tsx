@@ -22,14 +22,22 @@ const Home = () => {
 
     return (
         <div className="flex min-h-screen bg-gray-100 p-4">
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 w-full">
+                {interviews.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-full">
+                        <h1 className="text-2xl font-bold ">No previous interviews</h1>
+                    </div>
+                ) : (
+                    <>
                 <h1 className="text-2xl font-bold">Your previous interviews</h1>
                 <Separator className="w-full"/>
-                <div className="grid gap-4">
-                    {interviews.map(interview => (
-                        <SavedInterview key={interview.id} interview={interview} setInterviews={setInterviews}/>
-                    ))}
-                </div>
+                        <div className="grid gap-4">
+                            {interviews.map(interview => (
+                                <SavedInterview key={interview.id} interview={interview} setInterviews={setInterviews}/>
+                            ))}
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );
