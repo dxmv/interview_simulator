@@ -34,6 +34,7 @@
     - [ ] Hash passwords
     - [ ] Navigate after registration & login
     - [x] The user can start the interview without uploading a cv
+    - [ ] After logging in, the cv upload page is shown again
 ---
 ## Next steps
 
@@ -57,13 +58,13 @@
     - [x] Display a graph with the interview history grades
 - [x] JWT token context 
 - [x] CV uploaded context
-- [ ] Settings page
+- [x] Settings page
     - [ ] Change email
     - [ ] Change password
     - [ ] Change theme
-    - [ ] Change voice
+    - [ ] Change voice of the interviewer
     - [ ] Delete account
-    - [ ] Logout
+    - [x] Logout
 - [ ] Simulation & Training mode
     - [ ] Can select the type of interview 
     - [ ] Different prompts for different types of interviews
@@ -72,7 +73,6 @@
     - [ ] Visual feedback for voice waves
 - [ ] Better voice for ai
 - [ ] Better ui & ux
-    - [x] Use shadcn/ui
 - [ ] Dark & light mode
 - [ ] Messages when uploading cv
 - [ ] Messages when generating questions

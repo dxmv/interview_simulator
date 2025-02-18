@@ -6,6 +6,7 @@ import Register from './components/register/Register';
 import Interview from './components/interview/Interview';
 import CV_Page from './components/cv/CV_Page';
 import StatsPage from './components/stats/StatsPage';
+import Settings from './components/settings/Settings';
 import AuthWrapper from './context/auth/AuthWrapper';
 import ProtectedLayout from './context/auth/ProtectedLayout';
 import { CVupload } from './components/cv-upload/CVupload';
@@ -51,6 +52,10 @@ export const router = createBrowserRouter([
           {
             path: '/cv-upload',
             element: <CVupload />
+          },
+          {
+            path: '/settings',
+            element: <Settings />
           }
         ]
       }
