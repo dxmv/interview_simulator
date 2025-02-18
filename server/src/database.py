@@ -16,6 +16,10 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    # Relationships with cascade delete
+    cv = db.relationship('CV', backref=db.backref('user'), cascade='all, delete-orphan', uselist=False)
+    interviews = db.relationship('Interview', backref=db.backref('user'), cascade='all, delete-orphan', lazy=True)
+
     def __init__(self, email, password):
         self.email = email
         self.password = password
@@ -39,7 +43,7 @@ class CV(db.Model):
     __tablename__ = 'cvs'
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False, unique=True)
     personal_info = db.Column(JSONB, nullable=False)
     skills = db.Column(JSONB, nullable=False)
     education = db.Column(JSONB, nullable=False)
@@ -47,9 +51,6 @@ class CV(db.Model):
     projects = db.Column(JSONB, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
-    # Relationship with User (one to one)
-    user = db.relationship('User', backref=db.backref('cv', uselist=False))
 
     def __repr__(self):
         return f'<CV {self.user_id}>'
@@ -71,16 +72,13 @@ class Interview(db.Model):
     __tablename__ = 'interviews'
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     messages = db.Column(JSONB, nullable=False, default=list)
     date = db.Column(db.DateTime, default=datetime.utcnow)
     summary = db.Column(db.Text, nullable=True)
     grade = db.Column(db.Integer, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
-    # Relationship with User (one to many)
-    user = db.relationship('User', backref=db.backref('interviews', lazy=True))
 
     def __repr__(self):
         return f'<Interview {self.id} for user {self.user_id}>'

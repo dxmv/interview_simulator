@@ -61,9 +61,9 @@
 - [x] Settings page
     - [ ] Change email
     - [ ] Change password
-    - [ ] Change theme
+    - [x] Change theme
     - [ ] Change voice of the interviewer
-    - [ ] Delete account
+    - [x] Delete account
     - [x] Logout
 - [ ] Simulation & Training mode
     - [ ] Can select the type of interview 

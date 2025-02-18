@@ -70,3 +70,19 @@ def update_profile():
         return jsonify({'error': str(e)}), 400
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@user_blueprint.route("/delete", methods=['DELETE'])
+@jwt_required
+def delete_user():
+    '''
+    Delete user
+    '''
+    try:
+        user_service.delete_user()
+        return jsonify({'message': 'User deleted successfully'}), 200
+    except ValueError as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 500

@@ -115,3 +115,17 @@ export const updateProfile = async (profileData: Partial<User>): Promise<User> =
 
     return response.json();
 }; 
+
+/**
+ * Delete user account
+ * @returns void
+ */
+export const deleteAccount = async (token: string): Promise<void> => {
+    const response = await fetch(`${API_URL}/delete`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    return response.json();
+};

@@ -35,3 +35,23 @@ class UserService:
             raise ValueError('Invalid email or password')
             
         return user
+
+    def delete_user(self):
+        user_id = get_jwt_identity()
+        if user_id is None:
+            raise ValueError('User not found')
+        
+        try:
+            user = User.query.filter_by(id=user_id).first()
+            if not user:
+                raise ValueError('User not found')
+            
+            # Delete the user - related records will be deleted automatically
+            self.db.session.delete(user)
+            self.db.session.commit()
+                
+        except Exception as e:
+            self.db.session.rollback()
+            print(f"Error deleting user: {str(e)}")
+            raise ValueError(f"Failed to delete user: {str(e)}")
+

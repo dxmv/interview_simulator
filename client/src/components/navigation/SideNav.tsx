@@ -31,7 +31,7 @@ const SideNav = () => {
                         key={item.path}
                         to={item.path}
                         className={`flex items-center gap-4 p-2 rounded-lg transition-colors
-                            ${location.pathname === item.path ? 'bg-gray-700' : 'hover:bg-gray-800'} ${item.different ? 'bg-blue-800' : ''} ${item.end ? 'align-self-end' : ''}`}
+                            ${location.pathname === item.path ? 'bg-gray-700' : 'hover:bg-gray-800'} ${item.different ? 'bg-blue-800' : ''} ${item.end ? 'mt-auto' : ''}`}
                     >
                         <span className="min-w-[24px]">{item.icon}</span>
                         <span 
