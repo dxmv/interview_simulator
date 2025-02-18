@@ -59,7 +59,7 @@
 - [x] JWT token context 
 - [x] CV uploaded context
 - [x] Settings page
-    - [ ] Change email
+    - [x] Change email
     - [ ] Change password
     - [x] Change theme
     - [ ] Change voice of the interviewer

@@ -91,7 +91,8 @@ export const getProfile = async (): Promise<User> => {
         throw new Error(error.error || 'Failed to fetch profile');
     }
 
-    return response.json();
+    const data = await response.json();
+    return data.user;
 };
 
 /**
@@ -99,13 +100,14 @@ export const getProfile = async (): Promise<User> => {
  * @param profileData - profile data to update
  * @returns updated profile data
  */
-export const updateProfile = async (profileData: Partial<User>): Promise<User> => {
+export const updateProfile = async (email: string,token: string): Promise<User> => {
     const response = await fetch(`${API_URL}/profile`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(profileData),
+        body: JSON.stringify({ email }),
     });
 
     if (!response.ok) {
@@ -113,7 +115,8 @@ export const updateProfile = async (profileData: Partial<User>): Promise<User> =
         throw new Error(error.error || 'Failed to update profile');
     }
 
-    return response.json();
+    const data = await response.json();
+    return data.user;
 }; 
 
 /**
@@ -127,5 +130,9 @@ export const deleteAccount = async (token: string): Promise<void> => {
             'Authorization': `Bearer ${token}`
         }
     });
-    return response.json();
+
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to delete account');
+    }
 };

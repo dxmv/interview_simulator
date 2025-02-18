@@ -59,13 +59,14 @@ def get_profile():
         return jsonify({'error': str(e)}), 500
 
 @user_blueprint.route("/profile", methods=['PUT'])
+@jwt_required
 def update_profile():
     '''
     Update user profile
     '''
     try:
-        # TODO: Implement update profile
-        pass
+        user = user_service.update_user(request.json)
+        return jsonify({'user': user.to_dict()}), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 400
     except Exception as e:
