@@ -35,6 +35,7 @@
     - [ ] Navigate after registration & login
     - [x] The user can start the interview without uploading a cv
     - [ ] After logging in, the cv upload page is shown again
+    - [ ] The user can see the password by clicking on the eye icon
 ---
 ## Next steps
 
@@ -60,7 +61,7 @@
 - [x] CV uploaded context
 - [x] Settings page
     - [x] Change email
-    - [ ] Change password
+    - [x] Change password
     - [x] Change theme
     - [ ] Change voice of the interviewer
     - [x] Delete account

@@ -136,3 +136,26 @@ export const deleteAccount = async (token: string): Promise<void> => {
         throw new Error(error.error || 'Failed to delete account');
     }
 };
+
+/**
+ * Change user password
+ * @param currentPassword - current password
+ * @param newPassword - new password
+ * @param token - user token
+ * @returns void
+ */
+export const changePassword = async (currentPassword: string, newPassword: string, token: string): Promise<void> => {
+    const response = await fetch(`${API_URL}/password`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
+    });
+
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to change password');
+    }
+};

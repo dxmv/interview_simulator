@@ -93,3 +93,31 @@ class UserService:
             self.db.session.rollback()
             print(f"Error deleting user: {str(e)}")
             raise ValueError(f"Failed to delete user: {str(e)}")
+
+    def change_password(self, password_data):
+        '''
+        Change the user's password
+        '''
+        user_id = get_jwt_identity()
+        if user_id is None:
+            raise ValueError('User not found')
+
+        try:
+            # Get the user from the database
+            user = User.query.filter_by(id=user_id).first()
+            if not user:
+                raise ValueError('User not found')
+
+            # Verify current password
+            if user.password != password_data['current_password']:  # In production, use proper password hashing!
+                raise ValueError('Current password is incorrect')
+
+            # Update the password
+            user.password = password_data['new_password']  # In production, hash the password!
+            self.db.session.commit()
+            return user
+
+        except Exception as e:
+            self.db.session.rollback()
+            print(f"Error changing password: {str(e)}")
+            raise ValueError(f"Failed to change password: {str(e)}")

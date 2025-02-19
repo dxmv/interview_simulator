@@ -1,18 +1,16 @@
 import { useState } from 'react';
 import { Button } from '../ui/button';
-import { Input } from '../ui/input';
 import { Separator } from '../ui/separator';
-import { Lock, Sun, Moon } from 'lucide-react';
+import { Sun, Moon } from 'lucide-react';
 import AccountActions from './AccountActions';
 import EmailSettings from './EmailSettings';
+import PasswordSettings from './PasswordSettings';
 import { useTheme } from '../../context/theme/ThemeContext';
 /**
  * Settings component allows users to manage their account settings,
  * including email, password, theme, and voice preferences.
  */
 const Settings = () => {
-    const [currentPassword, setCurrentPassword] = useState('');
-    const [newPassword, setNewPassword] = useState('');
     const { theme, toggleTheme } = useTheme();
 
     return (
@@ -25,30 +23,7 @@ const Settings = () => {
             <Separator className="my-6" />
 
             {/* Password Settings */}
-            <section className="mb-8">
-                <h2 className="text-lg font-semibold mb-4">Password Settings</h2>
-                <div className="space-y-4">
-                    <Input
-                        type="password"
-                        placeholder="Current Password"
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
-                        className="max-w-md"
-                        icon={<Lock className="h-4 w-4 text-gray-500" />}
-                    />
-                    <Input
-                        type="password"
-                        placeholder="New Password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        className="max-w-md"
-                        icon={<Lock className="h-4 w-4 text-gray-500" />}
-                    />
-                    <Button variant="outline" className="w-40">
-                        Change Password
-                    </Button>
-                </div>
-            </section>
+            <PasswordSettings />
 
             <Separator className="my-6" />
 

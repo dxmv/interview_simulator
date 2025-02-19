@@ -87,3 +87,20 @@ def delete_user():
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 500
+
+@user_blueprint.route("/password", methods=['PUT'])
+@jwt_required
+def change_password():
+    '''
+    Change user password
+    '''
+    try:
+        if not request.json or not 'current_password' in request.json or not 'new_password' in request.json:
+            raise ValueError('Current password and new password are required')
+            
+        user = user_service.change_password(request.json)
+        return jsonify({'message': 'Password changed successfully'}), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
