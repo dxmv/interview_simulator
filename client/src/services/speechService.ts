@@ -31,13 +31,19 @@ export class SpeechService {
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.rate = 1.0;
         utterance.pitch = 1.0;
-        utterance.volume = 1.0;
 
         // Use a more natural voice if available
         const voices = this.synthesis.getVoices();
-        const englishVoice = voices.find(voice => voice.lang.startsWith('en-'));
-        if (englishVoice) {
-            utterance.voice = englishVoice;
+        const preferredVoice = voices.find(
+            voice => voice.lang.startsWith('en') && 
+            (voice.name.includes('Premium') || 
+             voice.name.includes('Enhanced') ||
+             voice.name.includes('Neural'))
+        ) || 
+        voices.find(voice => voice.lang.startsWith('en'));
+
+        if (preferredVoice) {
+            utterance.voice = preferredVoice;
         }
 
         // Attach the onend event to the utterance

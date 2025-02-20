@@ -59,34 +59,22 @@ const StatsSection = ({ interviews }: StatsSectionProps) => {
                         {minGrade.toFixed(1)}
                     </p>
                 </div>
-
-                {/* Interviews completed */}
-                <div className="bg-white p-4 rounded-lg shadow">
-                    <h3 className="text-lg font-semibold text-gray-700">Interviews Completed</h3>
-                    <p className="text-3xl font-bold text-purple-600">
-                        {interviews.length}
-                    </p>
-                </div>
             </div>
 
             {/* Add the grades chart */}
-            <GradesChart interviews={interviews} />
-
-            {/* Recent performance */}
-            <div className="bg-white p-4 rounded-lg shadow">
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">Recent Performance</h3>
-                <div className="space-y-2">
-                    <p>
-                        Last interview: {lastInterviewDate} (Grade: {lastInterview.grade})
-                    </p>
-                    <p>
-                        Performance trend: {' '}
-                        <span className={isImproving ? 'text-green-600' : 'text-orange-600'}>
-                            {isImproving ? '↗ Improving' : '→ Stable/Declining'}
-                        </span>
-                    </p>
-                </div>
-            </div>
+            <GradesChart interviews={[{
+                date: "2024-01-01",
+                messages: [],
+                summary: "",
+                id: 1,
+                grade: 5
+            }, {
+                date: "2024-01-02",
+                messages: [],
+                summary: "",
+                id: 2,
+                grade: 6
+            }]} />
         </div>
     );
 };

@@ -1,51 +1,94 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { SavedInterview } from '../../types/interview';
 
-interface GradesChartProps {
-    interviews: SavedInterview[];
+import { TrendingUp } from "lucide-react"
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+import { SavedInterview } from "@/types/interview"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart"
+
+
+const chartData = [
+  { month: "January", desktop: 186 },
+  { month: "February", desktop: 305 },
+  { month: "March", desktop: 237 },
+  { month: "April", desktop: 73 },
+  { month: "May", desktop: 209 },
+  { month: "June", desktop: 214 },
+]
+
+const chartConfig = {
+  desktop: {
+    label: "Desktop",
+    color: "hsl(var(--chart-1))",
+  },
+} satisfies ChartConfig
+
+export function GradesChart({ interviews }: { interviews: SavedInterview[] }) {
+  return (
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>Grades</CardTitle>
+        <CardDescription>
+          Showing grades for your interviews
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={chartConfig} className="w-full h-2/5">
+          <AreaChart
+            accessibilityLayer
+            data={interviews.map((interview) => ({
+              date: interview.date,
+              grade: interview.grade,
+            }))}
+            margin={{
+              left: 12,
+              right: 12,
+            }}
+          >
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="date"
+              tickFormatter={(value) => value.slice(0, 10)}
+            />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent indicator="dot" hideLabel />}
+            />
+            <Area
+              dataKey="grade"
+              type="linear"
+              fill="var(--color-grade)"
+              fillOpacity={0.4}
+              stroke="var(--color-grade)"
+            />
+          </AreaChart>
+        </ChartContainer>
+      </CardContent>
+      {/* <CardFooter>
+        <div className="flex w-full items-start gap-2 text-sm">
+          <div className="grid gap-2">
+            <div className="flex items-center gap-2 font-medium leading-none">
+              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+            </div>
+            <div className="flex items-center gap-2 leading-none text-muted-foreground">
+              January - June 2024
+            </div>
+          </div>
+        </div>
+      </CardFooter> */}
+    </Card>
+  )
 }
 
-const GradesChart = ({ interviews }: GradesChartProps) => {
-    if (interviews.length === 0) return null;
-
-    // Prepare data for the chart
-    const chartData = interviews
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-        .map(interview => ({
-            date: new Date(interview.date).toLocaleDateString(),
-            grade: interview.grade
-        }));
-
-    return (
-        <div className="bg-white p-4 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-700 mb-4">Grade History</h3>
-            <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 20, left: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis 
-                            dataKey="date" 
-                            angle={-45}
-                            textAnchor="end"
-                            height={60}
-                        />
-                        <YAxis 
-                            domain={[0, 10]} 
-                            ticks={[0, 2, 4, 6, 8, 10]}
-                        />
-                        <Tooltip />
-                        <Line 
-                            type="monotone" 
-                            dataKey="grade" 
-                            stroke="#4F46E5" 
-                            strokeWidth={2}
-                            dot={{ fill: '#4F46E5', strokeWidth: 2 }}
-                        />
-                    </LineChart>
-                </ResponsiveContainer>
-            </div>
-        </div>
-    );
-};
-
-export default GradesChart; 
+export default GradesChart;
